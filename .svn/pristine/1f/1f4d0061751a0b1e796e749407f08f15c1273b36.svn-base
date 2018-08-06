@@ -1,0 +1,88 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.RESET_PSW_CODE
+import cn.iimedia.jb.common.RESET_PSW_PHONE
+import cn.iimedia.jb.common.intentToResetPassword
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.CustomTextWatcher
+import com.xiong.appbase.utils.RegExConstants
+import kotlinx.android.synthetic.main.activity_forget_password.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 忘记密码
+ */
+class ForgetPasswordActivity : BaseActivity(), View.OnClickListener {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_forget_password
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        btn_verification.setOnClickListener(this)
+        btn_next.setOnClickListener(this)
+        setVerify(false)
+        et_phone.addTextChangedListener(object : CustomTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.length == 0) {
+                    setVerify(false)
+                } else {
+                    if (Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(s.toString())) {
+                        setVerify()
+                    } else {
+                        setVerify(false)
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_verification -> verifyCode()
+            R.id.btn_next -> next()
+        }
+    }
+
+    private fun verifyCode() {
+        val phone = et_phone.text.toString()
+
+        showToast("验证码已发送")
+    }
+
+    private fun setVerify(flag: Boolean = true) {
+        if (flag) {
+            btn_verification.isEnabled = true
+            btn_verification.setBackgroundResource(R.drawable.login_btn_bg)
+        } else {
+            btn_verification.isEnabled = false
+            btn_verification.setBackgroundResource(R.drawable.btn_disabled_bg)
+        }
+    }
+
+    private fun next() {
+        val phone = et_phone.text.toString()
+        val code = et_verification.text.toString()
+        if (TextUtils.isEmpty(phone)) {
+            showToast("手机号码不能为空")
+            return
+        }
+        if (!Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(phone)) {
+            showToast("请输入正确的手机号码")
+            return
+        }
+        if (TextUtils.isEmpty(code)) {
+            showToast("验证码不能为空")
+            return
+        }
+
+        mApp.setInternalActivityParam(RESET_PSW_PHONE, phone)
+        mApp.setInternalActivityParam(RESET_PSW_CODE, code)
+        intentToResetPassword(mActivity)
+    }
+}

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">艾媒金榜</string>
+    <string name="pageBehavior" translatable="false">cn.iimedia.jb.rankingBrand.scrollPage.PageBehavior</string>
+    <string name="logout_text">登录 / 注册</string>
+
+    <string name="phone_empty">手机号不能为空</string>
+    <string name="email_not_match">请输入正确的邮箱号</string>
+    <string name="phone_not_match">请输入正确的手机号码</string>
+    <string name="code_empty">验证码不能为空</string>
+    <string name="password_empty">密码不能为空</string>
+    <string name="send_code_success">验证码已发送</string>
+    <string name="old_password_empty">原密码不能为空</string>
+    <string name="new_password_empty">新密码不能为空</string>
+    <string name="password_not_match">密码必须为6-12位数字或字母</string>
+    <string name="confirm_password_empty">确认新密码不能为空</string>
+    <string name="password_not_same">两次输入新密码不一致</string>
+    <string name="protocol_false">请同意用户协议</string>
+
+    <!--请求返回提示-->
+    <string name="phone_error">手机号码不正确</string>
+    <string name="send_code_fail">验证码发送失败,请稍后重试</string>
+    <string name="phone_registered">号码已注册</string>
+    <string name="repeat_send">请勿重复发送</string>
+    <string name="img_code_error">图形验证码错误</string>
+    <string name="parameter_error">参数错误</string>
+    <string name="server_error">服务器错误</string>
+    <string name="register_success">注册成功</string>
+    <string name="register_fail">注册失败</string>
+    <string name="login_error">登录失败</string>
+    <string name="login_success">登录成功</string>
+    <string name="user_not_exist">用户不存在</string>
+    <string name="name_or_psw_error">用户名或者密码错误</string>
+    <string name="change_psw_fail">修改密码失败</string>
+    <string name="change_psw_success">修改密码成功</string>
+    <string name="pls_register">用户不存在，请先注册</string>
+</resources>

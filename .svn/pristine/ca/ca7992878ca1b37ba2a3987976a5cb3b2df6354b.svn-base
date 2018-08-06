@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/AppBaseTheme.Toolbar"
+            android:background="@color/white"
+            app:navigationIcon="@mipmap/btn_back"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:titleTextAppearance="@style/toolbar_title_text">
+
+            <ImageView
+                android:id="@+id/top_img_logo"
+                android:layout_width="@dimen/brand_top_img"
+                android:layout_height="@dimen/brand_top_img"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                tools:src="@mipmap/test_brand" />
+
+            <ImageView
+                android:id="@+id/share"
+                style="@style/top_btn"
+                android:layout_gravity="end"
+                android:background="?attr/selectableItemBackground"
+                android:src="@mipmap/btn_share" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                tools:src="@mipmap/test_brand" />
+
+            <TextView
+                android:id="@+id/brand_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_color1"
+                android:textSize="20sp"
+                tools:text="雅诗兰黛  ESTEE LAUDER" />
+
+            <TextView
+                android:id="@+id/brand_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/text_color3"
+                android:textSize="12sp"
+                tools:text="始于1949年" />
+
+            <Button
+                android:id="@+id/collect"
+                style="@style/common_btn1"
+                android:layout_marginTop="12dp"
+                android:text="收藏" />
+
+            <TextView
+                android:id="@+id/desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:lineSpacingMultiplier="1.5"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textColor="@color/text_color3"
+                android:textSize="12sp"
+                tools:text="雅诗兰黛是美国雅诗兰黛公司旗下的化妆品旗舰品牌，以抗衰修护护肤品闻名。如今，雅诗兰黛旗下的护肤，彩妆以及香氛产品都成为了科学与艺术完美结合的最佳范例，已在全球130多个国家销售。" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="40dp"
+                android:text="入选榜单"
+                android:textColor="@color/text_color3"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/select_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="48dp"
+                android:text="上榜品牌"
+                android:textColor="@color/text_color3"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/goods_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
+
+            <include layout="@layout/more_button" />
+
+            <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="8dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:background="@color/bg_color2" />-->
+
+            <!--<include layout="@layout/ranking_bottom_layout" />-->
+
+            <include layout="@layout/expose_layout" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

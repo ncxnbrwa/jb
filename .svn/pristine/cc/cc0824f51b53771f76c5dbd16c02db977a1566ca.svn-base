@@ -1,0 +1,232 @@
+package cn.iimedia.jb.homepage
+
+import android.os.Bundle
+import android.support.v7.widget.SearchView
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.homepage.adapter.SearchBrandAdapter
+import cn.iimedia.jb.homepage.adapter.SearchHistoryAdapter
+import cn.iimedia.jb.homepage.adapter.SearchRankingAdapter
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.RankInfo
+import cn.iimedia.jb.http.bean.RankingBrandsList
+import cn.iimedia.jb.http.bean.SearchBean
+import cn.iimedia.jb.http.bean.SearchDatabase
+import com.alibaba.android.vlayout.DelegateAdapter
+import com.alibaba.android.vlayout.VirtualLayoutManager
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.extension.setTextStyle
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.KeyboardUtils
+import kotlinx.android.synthetic.main.activity_search.*
+import org.litepal.crud.DataSupport
+import org.litepal.crud.callback.FindMultiCallback
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+
+/**
+ * Created by iiMedia on 2018/5/18.
+ * 搜索页
+ */
+class SearchActivity : BaseActivity(), View.OnClickListener {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+    var pageNum = 1
+    private var search: SearchView? = null
+    var layoutManager: VirtualLayoutManager? = null
+    var delegateAdapter: DelegateAdapter? = null
+    var historyAdapter: SearchHistoryAdapter? = null
+    var rankingAdapter: SearchRankingAdapter? = null
+    var brandAdapter: SearchBrandAdapter? = null
+    val searchHistoryList = ArrayList<SearchDatabase>()
+    val resultRankingList = ArrayList<RankInfo>()
+    val resultBrandList = ArrayList<RankingBrandsList>()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_search
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cancel?.setOnClickListener(this)
+        search = findViewById(R.id.search)
+        search?.setTextStyle(12f, R.color.text_color5, R.color.text_color3)
+        search?.isFocusable = true
+        search?.isIconified = false
+        search?.requestFocusFromTouch()
+
+        //去掉下划线
+        val c = search?.javaClass
+        try {
+            val f = c?.getDeclaredField("mSearchPlate")//通过反射，获得类对象的一个属性对象
+            f?.isAccessible = true//设置此私有属性是可访问的
+            val v = f?.get(search) as View//获得属性的值
+            v.setBackgroundResource(R.drawable.search_bg)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        layoutManager = VirtualLayoutManager(mActivity)
+        search_list?.layoutManager = layoutManager
+        delegateAdapter = DelegateAdapter(layoutManager, true)
+        search_list?.adapter = delegateAdapter
+
+        getHistory()
+
+        search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null && query.isNotEmpty()) {
+                    querySubmit(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null && newText.isEmpty()) {
+                    initContent()
+                    getHistory()
+                }
+                return false
+            }
+        })
+    }
+
+    private fun initContent() {
+        layoutManager = VirtualLayoutManager(mActivity)
+        search_list?.layoutManager = layoutManager
+        delegateAdapter = DelegateAdapter(layoutManager, true)
+        search_list?.adapter = delegateAdapter
+        delegateAdapter?.clear()
+    }
+
+    private fun getHistory() {
+        result_hint?.visibility = View.GONE
+        search_list?.visibility = View.VISIBLE
+        searchHistoryList.clear()
+        //从数据库获取搜索历史
+        DataSupport.findAllAsync(SearchDatabase::class.java).listen(object : FindMultiCallback {
+            override fun <T : Any?> onFinish(t: MutableList<T>?) {
+                searchHistoryList.addAll(t as ArrayList<SearchDatabase>)
+                historyAdapter = SearchHistoryAdapter(mActivity, searchHistoryList,
+                        { data: SearchDatabase, position: Int, v: View ->
+                            when (v.id) {
+                                R.id.delete -> {
+                                    DataSupport.delete(SearchDatabase::class.java, data.id)
+                                    if (position > 0) {
+                                        //因为有个头布局,所以-1
+                                        searchHistoryList.removeAt(position - 1)
+                                        historyAdapter?.notifyItemRemoved(position)
+                                    }
+                                }
+                                else -> {
+                                    //第二个参数false只修改搜索文字,true还会提交搜索,走监听设置的方法
+                                    search?.setQuery(data.searchName, false)
+                                    querySubmit(data.searchName, false)
+                                }
+                            }
+                        },
+                        {
+                            for (data in searchHistoryList) {
+                                data.delete()
+                            }
+                            searchHistoryList.clear()
+                            historyAdapter?.notifyDataSetChanged()
+                        })
+                delegateAdapter?.addAdapter(historyAdapter)
+            }
+        })
+    }
+
+    //搜索提交
+    private fun querySubmit(query: String, save: Boolean = true) {
+        resultBrandList.clear()
+        resultRankingList.clear()
+        //保存搜索记录
+        if (save) {
+            SearchDatabase.saveNotRepeat(query)
+        }
+        //收起键盘
+        KeyboardUtils.hideSoftInput(mActivity)
+        initContent()
+        val searchCall = api.querySearch(query, els.getStringData(ELS.USER_ID)
+                , 0, pageNum, 10, els.getStringData(ELS.IMEI))
+        searchCall.enqueue(object : Callback<SearchBean> {
+            override fun onResponse(call: Call<SearchBean>?, response: Response<SearchBean>?) {
+                val bean = response?.body()
+                when (bean?.code) {
+                    "1" -> {
+                        var resultCount = 0
+                        if (bean.brandlist.isNotEmpty()) {
+                            resultBrandList.addAll(bean.brandlist)
+                            resultCount += bean.brandlist.size
+                        }
+                        if (bean.rankInfoList.isNotEmpty()) {
+                            resultRankingList.addAll(bean.rankInfoList)
+                            resultCount += bean.rankInfoList.size
+                        }
+                        if (resultCount == 0) {
+                            search_list?.visibility = View.GONE
+                        } else {
+                            search_list?.visibility = View.VISIBLE
+                        }
+                        removeDuplication(resultBrandList, resultRankingList)
+                        //显示搜索结果条目
+                        showResultCount(resultCount)
+                        brandAdapter = SearchBrandAdapter(mActivity, resultBrandList, query)
+                        delegateAdapter?.addAdapter(brandAdapter)
+                        rankingAdapter = SearchRankingAdapter(mActivity, resultRankingList, query)
+                        delegateAdapter?.addAdapter(rankingAdapter)
+                    }
+                    "-1" -> {
+                        showToast("服务器问题")
+                        showResultCount(0)
+                    }
+                    "3" -> {
+                        showToast("参数错误")
+                        showResultCount(0)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<SearchBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "搜索失败")
+                showResultCount(0)
+            }
+        })
+    }
+
+    //以防万一去重
+    private fun removeDuplication(brandList: ArrayList<RankingBrandsList>
+                                  , rankingList: ArrayList<RankInfo>) {
+        for (i in 0 until brandList.size - 1) {
+            for (j in brandList.size - 1 downTo i + 1) {
+                if (brandList[i] == brandList[j]) {
+                    brandList.remove(brandList[i])
+                }
+            }
+        }
+        for (i in 0 until rankingList.size - 1) {
+            for (j in rankingList.size - 1 downTo i + 1) {
+                if (rankingList[i] == rankingList[j]) {
+                    rankingList.remove(rankingList[i])
+                }
+            }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.cancel -> finish()
+        }
+    }
+
+    private fun showResultCount(resultCount: Int) {
+        result_hint?.visibility = View.VISIBLE
+        result_hint?.text = "此次搜索共为你找出${resultCount}条结果"
+    }
+}

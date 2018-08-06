@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+    <dimen name="gap" >100dp</dimen >
+    <dimen name="image_padding">16dp</dimen>
+    <dimen name="home_card_width">100dp</dimen>
+    <dimen name="latest_item_width">76dp</dimen>
+    <dimen name="brand_goods_width">150dp</dimen>
+
+    <dimen name="btn_width">72dp</dimen>
+    <dimen name="btn_height">32dp</dimen>
+
+    <!--品牌详情页头部图标尺寸-->
+    <dimen name="brand_top_img">48dp</dimen>
+
+    <!--我的-->
+    <dimen name="mine_top_dimen">40dp</dimen>
+    <dimen name="user_icon_dimen">56dp</dimen>
+    <dimen name="right_arrow_dimen">16dp</dimen>
+    <dimen name="mine_item_height">48dp</dimen>
+
+    <dimen name="grid_expected_size">120dp</dimen>
+    <!--裁剪尺寸-->
+    <dimen name="crop">800dp</dimen>
+</resources >

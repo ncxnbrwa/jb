@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/AppBaseTheme.Toolbar"
+        android:background="@color/white"
+        app:navigationIcon="@mipmap/btn_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextAppearance="@style/toolbar_title_text">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="登录"
+            android:textColor="@color/text_color1"
+            android:textSize="15sp" />
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <include layout="@layout/cut_off_line" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/login_hint"
+                android:layout_marginTop="16dp"
+                android:text="手机号码" />
+
+            <TextView
+                android:id="@+id/phone_error"
+                style="@style/login_error"
+                android:layout_marginTop="16dp"
+                tools:text="账号不存在" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_phone"
+            style="@style/login_eidttext"
+            android:inputType="phone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/login_hint"
+                android:text="密码" />
+
+            <TextView
+                android:id="@+id/psw_error"
+                style="@style/login_error"
+                tools:text="密码错误" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_psw"
+            style="@style/login_eidttext"
+            android:inputType="textPassword"
+            android:maxLength="12" />
+
+        <Button
+            android:id="@+id/btn_login"
+            style="@style/login_button"
+            android:text="登录" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/forget_psw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="26dp"
+                android:layout_marginTop="16dp"
+                android:text="忘记密码"
+                android:textColor="@color/text_color3"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="26dp"
+                android:layout_marginTop="16dp"
+                android:text="新用户注册"
+                android:textColor="@color/text_color2"
+                android:textSize="13sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <include
+        layout="@layout/bottom_third_party"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

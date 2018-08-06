@@ -1,0 +1,25 @@
+package cn.iimedia.jb.mine.adapter
+
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 收藏页面pager adapter
+ */
+class CollectPageAdapter(fm: FragmentManager,val list:ArrayList<Fragment>) : FragmentPagerAdapter(fm) {
+    val mTitles = arrayListOf("商品榜单","品牌")
+
+    override fun getItem(position: Int): Fragment {
+        return list[position]
+    }
+
+    override fun getCount(): Int {
+       return list.size
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return mTitles[position]
+    }
+}

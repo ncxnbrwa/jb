@@ -1,0 +1,39 @@
+package cn.iimedia.jb.common
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 一些测试参数
+ */
+object Config {
+
+    val HTTP_LOG_TAG = "http_request"
+    val DATABASE_TAG = "database_tag"
+    val RANK_INFO_ID = "rankInfoId"
+    val BRAND_ID = "brandId"
+    val TOPIC_ID = "topicId"
+    val INFO_ID = "infoId"
+    val INFO_POSITION_ID = "infoPositionId"
+    val TWO_LEVEL_ID = "two_level_id"
+    val RESET_PSW_PHONE = "reset_psw_phone"
+    val RESET_PSW_CODE = "reset_psw_code"
+    //网页参数
+    val WEB_URL = "web_url"
+    val WEB_TITLE = "web_title"
+    val ABOUT_US_URL = "http://ranking.iimedia.cn/about.html"
+    val USER_PROTOCOL = "http://ranking.iimedia.cn/agreement.html"
+    val ABOUT_US_TITLE = "关于我们"
+    val DG_TITLE = "导购详情"
+    val PROTOCOL_TITLE = "用户协议"
+
+    //天猫包名
+    val TMALL_PAKAGE = "com.tmall.wireless"
+    //京东包名
+    val JD_PACKAGE = "com.jingdong.app.mall"
+
+    //友盟统计平台参数
+    val RANKING_UM_ID = "rankingDg"
+    val BRAND_UM_ID = "brandDg"
+    val UM_CLICK_PLAT = "platform"
+    val UM_PLAT_JD = "jing_dong"
+    val UM_PLAT_TM = "tian_mao"
+}

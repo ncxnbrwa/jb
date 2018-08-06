@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">艾媒金榜</string>
+    <string name="pageBehavior" translatable="false">cn.iimedia.jb.rankingBrand.scrollPage.PageBehavior</string>
+    <string name="logout_text">登录 / 注册</string>
+
+    <string name="phone_empty">手机号不能为空</string>
+    <string name="email_not_match">请输入正确的邮箱号</string>
+    <string name="phone_not_match">请输入正确的手机号码</string>
+    <string name="code_empty">验证码不能为空</string>
+    <string name="password_empty">密码不能为空</string>
+    <string name="send_code">验证码已发送</string>
+    <string name="old_password_empty">原密码不能为空</string>
+    <string name="new_password_empty">新密码不能为空</string>
+    <string name="password_not_match">密码必须为6-12位数字或字母</string>
+    <string name="confirm_password_empty">确认新密码不能为空</string>
+    <string name="password_not_same">两次输入新密码不一致</string>
+    <string name="protocol_false">请同意用户协议</string>
+</resources>

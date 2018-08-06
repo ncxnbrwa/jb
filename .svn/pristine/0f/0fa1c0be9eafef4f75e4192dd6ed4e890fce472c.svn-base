@@ -1,0 +1,209 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.CommonUserBean
+import com.afollestad.materialdialogs.MaterialDialog
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.extension.loadAvatarFit
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.http.UploadImgEngine
+import com.xiong.appbase.http.UploadImgService
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.DialogUtils
+import com.xiong.appbase.utils.ELS
+import com.yalantis.ucrop.entity.LocalMedia
+import kotlinx.android.synthetic.main.activity_user_info.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import vip.frendy.mediasel.model.FunctionConfig
+import vip.frendy.mediasel.model.LocalMediaLoader
+import vip.frendy.mediasel.model.PictureConfig
+import java.io.File
+import java.util.*
+import java.util.regex.Pattern
+import kotlin.collections.HashMap
+
+/**
+ * Created by iiMedia on 2018/5/3.
+ * 用户信息页
+ */
+class UserInfoActivity : BaseActivity(), View.OnClickListener, PictureConfig.OnSelectResultCallback {
+    private val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    private val service: UploadImgService = UploadImgEngine.createService(UploadImgService::class.java)
+    private val els: ELS = ELS.getInstance()
+    private val mActivity = this
+    //    var popWindow: PopupWindow? = null
+    private var picturesSelected: ArrayList<LocalMedia> = ArrayList()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_user_info
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        name.setText(els.getStringData(ELS.USERNAME))
+        icon.loadAvatarFit(els.getStringData(ELS.USER_IMG))
+
+        toolbar.setNavigationOnClickListener { finish() }
+        name_layout.setOnClickListener(this)
+        img_layout.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.name_layout -> {
+                if (els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+                    showToast("第三方信息不可修改哦")
+                    return
+                }
+                val nameDialog = DialogUtils.showEditText(mActivity, "修改用户名", "输入用户名",
+                        name.text.toString(),
+                        { _: MaterialDialog, input: CharSequence ->
+                            if (input.isNotEmpty()) {
+                                requestUpdateUserInfo(input.toString(), "")
+                            }
+                        })
+                nameDialog.show()
+            }
+            R.id.img_layout -> {
+//                showPopWindow()
+                if (els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+                    showToast("第三方信息不可修改哦")
+                    return
+                }
+                openAlbum()
+            }
+        }
+    }
+
+    private fun openAlbum() {
+        val config = FunctionConfig()
+        config.type = LocalMediaLoader.TYPE_IMAGE
+        config.isCompress = true
+        config.isEnablePixelCompress = true
+        config.isEnableQualityCompress = true
+        config.maxSelectNum = 1
+        config.selectMode = FunctionConfig.MODE_MULTIPLE
+        config.isShowCamera = true
+        config.isEnablePreview = true
+        config.isEnableCrop = false
+        config.isPreviewVideo = true
+        config.isCheckNumMode = false
+        config.compressQuality = 100
+        config.imageSpanCount = 4
+        config.selectMedia = picturesSelected
+        config.compressFlag = 2 //1:系统默认，2:luban
+        config.themeStyle = ContextCompat.getColor(mActivity, R.color.bg_color4)
+        // 可以自定义底部 预览 完成 文字的颜色和背景色
+        config.previewColor = ContextCompat.getColor(mActivity, R.color.white)
+        config.completeColor = ContextCompat.getColor(mActivity, R.color.white)
+        config.previewBottomBgColor = ContextCompat.getColor(mActivity, R.color.bg_color4)
+        config.bottomBgColor = ContextCompat.getColor(mActivity, R.color.bg_color4)
+
+        // 先初始化参数配置，在启动相册
+        PictureConfig.init(config)
+        PictureConfig.getPictureConfig().openPhoto(mActivity, this)
+    }
+
+    override fun onSelectSuccess(resultList: ArrayList<LocalMedia>) {
+        this.picturesSelected = resultList
+        val path = if (resultList[0].compressPath == null) resultList[0].path else resultList[0].compressPath
+        //先上传图片,再调用修改个人信息的接口
+        uploadImg(File(path))
+    }
+
+    private fun uploadImg(file: File) {
+        // 创建 RequestBody，用于封装 请求RequestBody
+        val requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+        val body = MultipartBody.Part.createFormData("image", createImageNetUrl(file.name), requestFile);
+        val call = service.upload(body)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                val bodyStr = response?.body()?.string()
+                //利用正则匹配出html中MD5值
+                val p = Pattern.compile("href=\"([^\"]+)\"")
+                val m = p.matcher(bodyStr)
+                if (m.find()) {
+                    //拼接域名则为最终的图片上传url
+                    val imgUrl = "${UploadImgEngine.BASE_URL_IMAGE}${m.group(1)}"
+                    DLog.w(HTTP_LOG_TAG, "图片上传后的url:$imgUrl")
+                    requestUpdateUserInfo("", imgUrl)
+                }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                showToast("图片上传失败")
+            }
+        })
+    }
+
+    //生成上传图片名
+    private fun createImageNetUrl(fileName: String): String {
+        return fileName + "_" + System.currentTimeMillis() + ".jpg"
+    }
+
+    private fun requestUpdateUserInfo(userName: String, img: String) {
+        // imei:手机标识；nickname：用户新昵称；img:用户头像；userId:登录返回的用户id；
+        // tempKey:用户用手机号登陆是手机号、第三方为授权的Id。
+        showLoadingDialog()
+        val map = HashMap<String, Any>()
+        map.put("imei", els.getStringData(ELS.IMEI))
+        if (!TextUtils.isEmpty(userName)) {
+            map.put("nickname", userName)
+        }
+        if (!TextUtils.isEmpty(img)) {
+            map.put("img", img)
+        }
+        map.put("userId", els.getStringData(ELS.USER_ID))
+        if (els.getBoolData(ELS.USER_ONLAND)) {
+            map.put("tempKey", els.getStringData(ELS.PHONE))
+        } else if (els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+            map.put("tempKey", els.getStringData(ELS.THIRD_PARTY_USER_ID))
+        }
+        val call = api.updateUserInfo(map)
+        call.enqueue(object : Callback<CommonUserBean> {
+            override fun onFailure(call: Call<CommonUserBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "修改个人信息请求失败")
+                dismissLoadingDialog()
+                showToast("修改失败")
+            }
+
+            override fun onResponse(call: Call<CommonUserBean>?, response: Response<CommonUserBean>?) {
+                val bean = response?.body()
+                //code：-1：服务器错误；3：参数错误，具体参考msg；2：用户不存在；1：成功；
+                when (bean?.code) {
+                    "-1" -> showToast(resources.getString(R.string.server_error))
+                    "3" -> showToast(resources.getString(R.string.parameter_error))
+                    "2" -> showToast(resources.getString(R.string.pls_register))
+                    "1" -> {
+//                        els.saveStringData(ELS.USER_ID, bean.userId)
+                        if (!TextUtils.isEmpty(userName)) {
+                            name.setText(userName)
+                            els.saveStringData(ELS.USERNAME, userName)
+                        }
+                        if (!TextUtils.isEmpty(img)) {
+                            icon.loadAvatarFit(img)
+                            els.saveStringData(ELS.USER_IMG, img)
+                        }
+                    }
+                }
+                dismissLoadingDialog()
+            }
+        })
+    }
+
+}
+
+

@@ -1,0 +1,33 @@
+package cn.iimedia.jb.mine.fragment
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import com.xiong.appbase.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_brand.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 收藏品牌
+ */
+class FragmentCollectBrand : BaseFragment() {
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_brand
+    }
+
+    companion object {
+        fun getInstance(): FragmentCollectBrand {
+            val f = FragmentCollectBrand()
+            return f
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ll_null.visibility = View.VISIBLE
+        brand_list.visibility = View.GONE
+//        brand_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+//        brand_list.addDivider(mActivity, R.drawable.vertical_gray_divider_8dp)
+//        brand_list.adapter = CollectBrandAdapter(mActivity)
+    }
+}

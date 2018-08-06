@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/window_camera"
+            style="@style/change_icon_window"
+            android:text="拍一张" />
+
+        <include layout="@layout/cut_off_line" />
+
+        <TextView
+            android:id="@+id/window_album"
+            style="@style/change_icon_window"
+            android:text="从相册选取" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@color/cut_off_line_color" />
+
+        <TextView
+            android:id="@+id/window_cancel"
+            style="@style/change_icon_window"
+            android:text="取消" />
+    </LinearLayout>
+</FrameLayout>

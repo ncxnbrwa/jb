@@ -1,0 +1,142 @@
+package cn.iimedia.jb
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.telephony.TelephonyManager
+import cn.iimedia.jb.classify.FragmentClassify
+import cn.iimedia.jb.homepage.FragmentHome
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.RetrofitHelper
+import cn.iimedia.jb.mine.fragment.FragmentMine
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.activity_main.*
+import vip.frendy.tablayout.entity.TabEntity
+import vip.frendy.tablayout.listener.CustomTabEntity
+import vip.frendy.tablayout.listener.OnTabSelectListener
+
+class MainActivity : BaseActivity() {
+    private val mFragments: ArrayList<Fragment> = ArrayList()
+    private val TAG = "MainActivity"
+    private val mActivity = this
+
+    //    private val mTitles: ArrayList<String> = arrayListOf("首页", "分类", "资讯", "我的")
+    private val mTitles: ArrayList<String> = arrayListOf("首页", "分类", "我的")
+    //    private val mIconUnselectIds = intArrayOf(R.mipmap.label_home, R.mipmap.label_class,
+//            R.mipmap.label_information, R.mipmap.label_personal)
+    private val mIconUnselectIds = intArrayOf(R.mipmap.label_home, R.mipmap.label_class,
+            R.mipmap.label_personal)
+    //    private val mIconSelectIds = intArrayOf(R.mipmap.label_home_pre, R.mipmap.label_class_pre,
+//            R.mipmap.label_information_pre, R.mipmap.label_personal_pre)
+    private val mIconSelectIds = intArrayOf(R.mipmap.label_home_pre, R.mipmap.label_class_pre,
+            R.mipmap.label_personal_pre)
+    private val mTabEntities = ArrayList<CustomTabEntity>()
+    var els: ELS = ELS.getInstance()
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    var tm: TelephonyManager? = null
+    var fragmentHome: FragmentHome? = null
+    var currentTab = 0
+    private val TAB_POSITION = "tab_position"
+
+    override fun getLayoutId(): Int = R.layout.activity_main
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt(TAB_POSITION, currentTab)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+        fragmentHome = FragmentHome.getInstance()
+        mFragments.add(fragmentHome as FragmentHome)
+        mFragments.add(FragmentClassify.getInstance())
+//        mFragments.add(FragmentInformation.getInstance())
+        mFragments.add(FragmentMine.getInstance())
+
+        //配置底部导航栏
+        for (i in mTitles.indices) {
+            mTabEntities.add(TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]))
+        }
+        bottom_tab.setTabData(mTabEntities, this, R.id.container, mFragments)
+        bottom_tab.setOnTabSelectListener(object : OnTabSelectListener {
+            override fun onTabSelect(current: Int) {
+                DLog.w(TAG, "点击了Tab:" + current)
+                val last = bottom_tab.lastTab
+                mFragments[current].userVisibleHint = true
+                mFragments[last].userVisibleHint = false
+                currentTab = current
+            }
+
+            override fun onTabReselect(position: Int) {
+                if (position == 0) {
+                    //再次点击主页时强制刷新
+                    fragmentHome?.tabRefresh()
+                }
+                DLog.w(TAG, "onTabReselect:" + position)
+            }
+        })
+        if (savedInstanceState != null) {
+            bottom_tab.currentTab = savedInstanceState.getInt(TAB_POSITION)
+        }
+
+        //申请获取imei的权限
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity,
+                        arrayOf(Manifest.permission.READ_PHONE_STATE), 1)
+            } else {
+                getImei()
+            }
+        } else {
+            getImei()
+        }
+
+        if (els.getBoolData(ELS.USER_ONLAND) || els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+            RetrofitHelper(mActivity).initCollectDatabase()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getImei()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getImei() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            els.saveStringData(ELS.IMEI, tm?.imei)
+        }
+        els.saveStringData(ELS.IMEI, tm?.deviceId)
+    }
+
+    //按两次退出程序
+    private var clickTwiceFlag = false
+
+    override fun onBackPressedSupport() {
+        if (clickTwiceFlag) {
+            super.onBackPressedSupport()
+            mApp.finishApplication()
+        } else {
+            clickTwiceFlag = true
+            showToast("快速按两次退出程序")
+        }
+        Handler().postDelayed({ clickTwiceFlag = false }, 2000)
+    }
+}

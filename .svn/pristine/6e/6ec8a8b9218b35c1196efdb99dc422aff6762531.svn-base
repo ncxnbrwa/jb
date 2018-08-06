@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/back"
+        style="@style/top_btn"
+        android:layout_alignParentLeft="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@mipmap/btn_back" />
+
+    <LinearLayout
+        android:id="@+id/top_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/fl_top_ranking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="4dp">
+
+            <ImageView
+                android:id="@+id/iv_top_ranking"
+                style="@style/ranking_brand_top_crown" />
+
+            <TextView
+                android:id="@+id/tv_top_ranking"
+                style="@style/ranking_brand_top_text"
+                android:text="榜单" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_top_brand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="4dp">
+
+            <ImageView
+                android:id="@+id/iv_top_brand"
+                style="@style/ranking_brand_top_crown" />
+
+            <TextView
+                android:id="@+id/tv_top_brand"
+                style="@style/ranking_brand_top_text"
+                android:text="品牌" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/share"
+        style="@style/top_btn"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"
+        android:src="@mipmap/btn_share" />
+</RelativeLayout>

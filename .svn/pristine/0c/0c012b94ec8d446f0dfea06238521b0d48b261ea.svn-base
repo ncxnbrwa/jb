@@ -1,0 +1,102 @@
+package cn.iimedia.jb
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.ContactUsBean
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.CustomTextWatcher
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.RegExConstants
+import kotlinx.android.synthetic.main.activity_contact_us.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/9.
+ * 联系我们页面
+ */
+class ContactUsActivity : BaseActivity(), View.OnClickListener {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_contact_us
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar?.setNavigationOnClickListener { finish() }
+        btn_commit?.setOnClickListener(this)
+        et_message.addTextChangedListener(object : CustomTextWatcher() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length > 0) {
+                    msg_limit.setText("${s.length}/1000")
+                } else {
+                    msg_limit.setText("0/1000")
+                }
+
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_commit -> commit()
+        }
+    }
+
+    private fun commit() {
+        val message = et_message.text.toString()
+        val name = et_name.text.toString()
+        val phone = et_phone.text.toString()
+        val email = et_email.text.toString()
+
+        if (TextUtils.isEmpty(message)) {
+            showToast("您的建议不能为空")
+            return
+        }
+        if (TextUtils.isEmpty(name)) {
+            showToast("您的姓名不能为空")
+            return
+        }
+        if (TextUtils.isEmpty(phone) && TextUtils.isEmpty(email)) {
+            showToast("电话和邮箱请必填一项")
+            return
+        }
+        if (!TextUtils.isEmpty(phone) && TextUtils.isEmpty(email)) {
+            if (!Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(phone)) {
+                showToast("请输入正确的手机号")
+                return
+            }
+        }
+        if (TextUtils.isEmpty(phone) && !TextUtils.isEmpty(email)) {
+            if (!Regex(RegExConstants.REGEX_EMAIL).matches(email)) {
+                showToast("请输入正确的邮箱号")
+                return
+            }
+        }
+
+        val call = api.contactUs(phone, email, name, message, els.getStringData(ELS.IMEI))
+        call.enqueue(object : Callback<ContactUsBean> {
+            override fun onResponse(call: Call<ContactUsBean>?, response: Response<ContactUsBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    if (bean.msg.equals("success")) {
+                        showToast("提交成功")
+                        finish()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ContactUsBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "联系我们接口请求失败")
+            }
+        })
+    }
+}

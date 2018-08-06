@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#C69F73</color>
+    <!--<color name="colorPrimaryDark">#F57C00</color>-->
+    <color name="colorPrimaryDark">#00FFFFFF</color>
+    <color name="colorAccent">#CDDC39</color>
+
+    <!--榜单品牌页颜色-->
+    <color name="text_color1">#333333</color>
+    <color name="text_color2">#C69F73</color>
+    <color name="text_color3">#999999</color>
+    <color name="text_color4">#BBBBBB</color>
+    <color name="text_color5">#666666</color>
+    <color name="text_color6">#CC712F</color>
+    <color name="text_color7">#E51C23</color>
+    <color name="text_color8">#68A9BC</color>
+    <color name="text_color9">#5CBE70</color>
+    <color name="btn_bg_color">#dd000000</color>
+
+    <color name="bg_color">#F5F5F5</color>
+    <color name="bg_color2">#F0F0F0</color>
+    <color name="bg_color3">#999999</color>
+    <color name="bg_color4">#C69F73</color>
+    <color name="bg_color5">#101010</color>
+    <color name="bg_color6">#E6EBEE</color>
+    <color name="bg_color7">#F57C00</color>
+    <color name="bg_color8">#C0C0C0</color>
+
+    <!--最热榜单透明度渐变色-->
+    <color name="more_rankingbg_color1">#CCC69F73</color>
+    <color name="more_rankingbg_color2">#AAC69F73</color>
+    <color name="more_rankingbg_color3">#88C69F73</color>
+    <color name="more_rankingbg_color4">#99000000</color>
+
+    <color name="btn_disable_color">#C0C0C0</color>
+</resources>

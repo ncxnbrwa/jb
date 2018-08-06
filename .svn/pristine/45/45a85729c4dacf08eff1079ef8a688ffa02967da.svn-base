@@ -1,0 +1,62 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToRegister
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.utils.RegExConstants
+import kotlinx.android.synthetic.main.activity_login.*
+
+/**
+ * Created by iiMedia on 2018/5/9.
+ * 登录页面
+ */
+class LoginActivity : BaseActivity(), View.OnClickListener {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_login
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar?.setNavigationOnClickListener { finish() }
+        register?.setOnClickListener(this)
+        btn_login?.setOnClickListener(this)
+        forget_psw?.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.register -> intentToRegister(mActivity)
+            R.id.btn_login -> login()
+            R.id.forget_psw -> {
+            }
+        }
+    }
+
+    fun login() {
+        val phone = et_phone.text.toString()
+        val psw = et_psw.text.toString()
+        if (!TextUtils.isEmpty(phone)) {
+            if (Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(phone)) {
+                if (!TextUtils.isEmpty(psw)) {
+
+                } else {
+                    showToast("密码不能为空")
+                    return
+                }
+            } else {
+                showToast("请输入正确的手机号码")
+                return
+            }
+        } else {
+            showToast("手机号不能为空")
+            return
+        }
+
+        //调用登录接口
+        showToast("登陆成功")
+        finish()
+    }
+}

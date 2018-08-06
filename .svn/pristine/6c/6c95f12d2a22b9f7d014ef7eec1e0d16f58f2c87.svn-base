@@ -1,0 +1,190 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppBaseTheme" parent="QMUI.Compat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="JbAppTheme" parent="AppBaseTheme">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style>
+
+    <!--品牌榜单页顶部文字样式-->
+    <style name="ranking_brand_top_text">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!--品牌榜单页顶部皇冠图标样式-->
+    <style name="ranking_brand_top_crown">
+        <item name="android:layout_width">12dp</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:src">@mipmap/nav_crown</item>
+    </style>
+
+    <!--品牌榜单页顶部未关注按钮样式-->
+    <style name="common_btn1">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:textColor">@color/text_color2</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/ranking_btn_drawable</item>
+    </style>
+
+    <!--品牌榜单页顶部已关注按钮样式-->
+    <style name="ranking_btn_favor">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/ranking_btn_drawable2</item>
+    </style>
+
+    <!--榜单页Tab文字样式-->
+    <style name="ranking_tab_text">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/text_color3</item>
+    </style>
+
+    <!--收藏页Tab文字-->
+    <style name="collect_tab_text">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_color5</item>
+    </style>
+
+    <!--头部选择按钮样式-->
+    <style name="top_btn">
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+
+    <!--更换头像弹窗-->
+    <style name="change_icon_window">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_color1</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!--弹窗动画-->
+    <style name="popwindow_anim">
+        <item name="android:windowEnterAnimation">@anim/bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_out</item>
+    </style>
+
+    <!--toolbar标题样式-->
+    <style name="toolbar_title_text">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!--二级分类-->
+    <style name="two_level_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_color1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <!--登录注册按钮-->
+    <style name="login_button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/btn_enable_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
+
+    <style name="time_button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:background">@drawable/btn_enable_bg</item>
+        <item name="android:layout_width">140dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <!--登录注册输入框-->
+    <style name="login_eidttext">
+        <item name="android:background">@drawable/login_edit_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">@color/text_color3</item>
+        <item name="android:textColor">@color/text_color5</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <!--第三方登录文字-->
+    <style name="third_party_name">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_color5</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <!--第三方登录图片-->
+    <style name="third_party_img">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!--登录注册提示文字-->
+    <style name="login_hint">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:textColor">@color/text_color5</item>
+    </style>
+
+    <!--登录注册错误提示-->
+    <style name="login_error">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:textColor">@color/text_color7</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:drawableRight">@mipmap/icon_red_wrong</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="ImgCodeDialogStyle">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">stateAlwaysVisible</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>

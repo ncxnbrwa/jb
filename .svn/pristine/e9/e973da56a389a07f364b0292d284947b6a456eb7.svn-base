@@ -1,0 +1,63 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToForgetPassword
+import cn.iimedia.jb.common.intentToRegister
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.utils.RegExConstants
+import kotlinx.android.synthetic.main.activity_login.*
+
+/**
+ * Created by iiMedia on 2018/5/9.
+ * 登录页面
+ */
+class LoginActivity : BaseActivity(), View.OnClickListener {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_login
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar?.setNavigationOnClickListener { finish() }
+        register?.setOnClickListener(this)
+        btn_login?.setOnClickListener(this)
+        forget_psw?.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.register -> intentToRegister(mActivity)
+            R.id.btn_login -> login()
+            R.id.forget_psw -> intentToForgetPassword(mActivity)
+        }
+    }
+
+    private fun login() {
+        val phone = et_phone.text.toString()
+        val psw = et_psw.text.toString()
+        phone_error.visibility = View.GONE
+        psw_error.visibility = View.GONE
+        if (TextUtils.isEmpty(phone)) {
+            phone_error.visibility = View.VISIBLE
+            phone_error.setText(resources.getString(R.string.phone_empty))
+            return
+        }
+        if (!Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(phone)) {
+            phone_error.visibility = View.VISIBLE
+            phone_error.setText(resources.getString(R.string.phone_not_match))
+            return
+        }
+        if (TextUtils.isEmpty(psw)) {
+            psw_error.visibility = View.VISIBLE
+            psw_error.setText(resources.getString(R.string.password_empty))
+            return
+        }
+
+        //调用登录接口
+        showToast("登录成功")
+        finish()
+    }
+}

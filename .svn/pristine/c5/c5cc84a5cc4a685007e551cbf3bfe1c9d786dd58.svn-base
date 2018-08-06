@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color2"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_color8"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mine_top_dimen">
+
+            <ImageButton
+                android:id="@+id/setting"
+                android:layout_width="@dimen/mine_top_dimen"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@mipmap/btn_setting" />
+        </FrameLayout>
+
+        <com.xiong.appbase.custom.CircleImageView
+            android:id="@+id/user_icon"
+            android:layout_width="@dimen/user_icon_dimen"
+            android:layout_height="@dimen/user_icon_dimen"
+            android:layout_gravity="center"
+            android:src="@mipmap/avatar"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="1dp" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="36dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/logout_text"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!--我的界面竖直排列的控件-->
+    <LinearLayout
+        android:id="@+id/collect_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mine_item_height"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="我的收藏"
+                android:textColor="@color/text_color5"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="@dimen/right_arrow_dimen"
+                android:layout_height="@dimen/right_arrow_dimen"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/right_arrow" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contact_us_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mine_item_height"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="联系我们"
+                android:textColor="@color/text_color5"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="@dimen/right_arrow_dimen"
+                android:layout_height="@dimen/right_arrow_dimen"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/right_arrow" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

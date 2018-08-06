@@ -1,0 +1,94 @@
+package cn.iimedia.jb
+
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.telephony.TelephonyManager
+import cn.iimedia.jb.classify.FragmentClassify
+import cn.iimedia.jb.homepage.FragmentHome
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.RetrofitHelper
+import cn.iimedia.jb.mine.fragment.FragmentMine
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.activity_main.*
+import vip.frendy.tablayout.entity.TabEntity
+import vip.frendy.tablayout.listener.CustomTabEntity
+import vip.frendy.tablayout.listener.OnTabSelectListener
+
+class MainActivity : BaseActivity() {
+    private val mFragments: ArrayList<Fragment> = ArrayList()
+
+    private val mTitles: ArrayList<String> = arrayListOf("主页", "分类", "我的")
+    private val mIconUnselectIds = intArrayOf(R.mipmap.label_home, R.mipmap.label_class,
+            R.mipmap.label_personal)
+    private val mIconSelectIds = intArrayOf(R.mipmap.label_home_pre, R.mipmap.label_class_pre,
+            R.mipmap.label_personal_pre)
+    private val mTabEntities = ArrayList<CustomTabEntity>()
+    var els: ELS = ELS.getInstance()
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_main
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mFragments.add(FragmentHome.getInstance())
+        mFragments.add(FragmentClassify.getInstance())
+        mFragments.add(FragmentMine.getInstance())
+
+        //配置底部导航栏
+        for (i in mTitles.indices) {
+            mTabEntities.add(TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]))
+        }
+        bottom_tab.setTabData(mTabEntities, this, R.id.container, mFragments)
+        bottom_tab.setOnTabSelectListener(object : OnTabSelectListener {
+            override fun onTabSelect(current: Int) {
+                val last = bottom_tab.getLastTab()
+                if (last != current) {
+                    mFragments[current].userVisibleHint = true
+                    mFragments[last].userVisibleHint = false
+                }
+            }
+
+            override fun onTabReselect(position: Int) {}
+        })
+
+        //申请获取imei的权限
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity,
+                        arrayOf(Manifest.permission.READ_PHONE_STATE), 1)
+            }
+        }
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        els.saveStringData(ELS.IMEI, tm.getDeviceId())
+
+        if (els.getBoolData(ELS.USER_ONLAND) || els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+            RetrofitHelper(mActivity).initCollectDatabase()
+        }
+    }
+
+    //按两次退出程序
+    private var clickTwiceFlag = false
+
+    override fun onBackPressed() {
+        if (clickTwiceFlag) {
+            super.onBackPressed()
+            mApp.finishApplication()
+        } else {
+            clickTwiceFlag = true
+            showToast("快速按两次退出程序")
+        }
+        Handler().postDelayed({ clickTwiceFlag = false }, 2000)
+    }
+}

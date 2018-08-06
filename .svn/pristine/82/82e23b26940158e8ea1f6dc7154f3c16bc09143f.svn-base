@@ -1,0 +1,95 @@
+package cn.iimedia.jb.homepage
+
+import android.os.Bundle
+import android.view.View
+import android.view.animation.AlphaAnimation
+import android.widget.LinearLayout
+import android.widget.TextView
+import cn.iimedia.jb.R
+import cn.iimedia.jb.homepage.adapter.TopicDetailAdapter
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.social.SocialShareActivity
+import com.xiong.appbase.utils.DLog
+import kotlinx.android.synthetic.main.activity_topic_detail.*
+
+/**
+ * Created by iiMedia on 2018/6/1.
+ * 专题页
+ */
+class TopicDetailActivity : BaseActivity(), View.OnClickListener {
+    val mActivity = this
+    val TAG = "TopicDetailActivity"
+    val ANIMATIONS_DURATION = 200L
+    var isToolbarVisible = false
+    var isTitleLayoutVisible = true
+    var toolbarTitle: TextView? = null
+    var titleLayout: LinearLayout? = null
+
+    override fun getLayoutId(): Int = R.layout.activity_topic_detail
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbarTitle = findViewById(R.id.toolbar_title)
+        titleLayout = findViewById(R.id.title_layout)
+        toolbar?.setNavigationOnClickListener { finish() }
+        appbar?.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val maxScroll = appBarLayout.totalScrollRange
+            val progress = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat() //百分比从0到1
+            DLog.e(TAG, " progress:" + progress)
+            animateOnToolbar(progress)
+            animateOnTitleLayout(progress)
+        }
+
+        topic_list?.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        topic_list?.addDivider(mActivity, R.drawable.vertical_white_divider_8dp)
+        topic_list?.adapter = TopicDetailAdapter(mActivity)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.share -> {
+                SocialShareActivity.intentTo(mActivity)
+            }
+        }
+    }
+
+    private fun animateOnToolbar(progress: Float) {
+        //处理Toolbar滑动的显示
+        if (progress < 0.9f) {
+            if (isToolbarVisible) {
+                startAlphaAnimation(toolbarTitle as View, View.GONE)
+                isToolbarVisible = false
+            }
+        } else {
+            if (!isToolbarVisible) {
+                startAlphaAnimation(toolbarTitle as View, View.VISIBLE)
+                isToolbarVisible = true
+            }
+        }
+    }
+
+    private fun animateOnTitleLayout(progress: Float) {
+        //处理标题Layout滑动的显示
+        if (progress >= 0.3f) {
+            if (isTitleLayoutVisible) {
+                startAlphaAnimation(titleLayout as View, View.GONE)
+                isTitleLayoutVisible = false
+            }
+        } else {
+            if (!isTitleLayoutVisible) {
+                startAlphaAnimation(titleLayout as View, View.VISIBLE)
+                isTitleLayoutVisible = true
+            }
+        }
+    }
+
+    private fun startAlphaAnimation(v: View, visibility: Int) {
+        //透明度变化动画,visibility参数表示结束状态
+        val alphaAnimation = if (visibility == View.VISIBLE) AlphaAnimation(0f, 1f) else AlphaAnimation(1f, 0f)
+        alphaAnimation.duration = ANIMATIONS_DURATION
+        alphaAnimation.fillAfter = true
+        v.startAnimation(alphaAnimation)
+    }
+}

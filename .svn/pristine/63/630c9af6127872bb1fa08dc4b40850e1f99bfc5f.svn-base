@@ -1,0 +1,60 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import com.xiong.appbase.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_modify_password.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 修改密码
+ */
+class ModifyPasswordActivity : BaseActivity(), View.OnClickListener {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_modify_password
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        btn_confirm.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_confirm -> commit()
+        }
+    }
+
+    private fun commit() {
+        val oldPsw = et_old_psw.text.toString()
+        val newPsw = et_new_psw.text.toString()
+        val confirmPsw = et_confirm_psw.text.toString()
+
+        if (TextUtils.isEmpty(oldPsw)) {
+            showToast("原密码不能为空")
+            return
+        }
+        if (TextUtils.isEmpty(newPsw)) {
+            showToast("新密码不能为空")
+            return
+        }
+        if (newPsw.length < 6 || newPsw.length > 12) {
+            showToast("密码必须为6-12位数字或字母")
+            return
+        }
+        if (TextUtils.isEmpty(confirmPsw)) {
+            showToast("确认新密码不能为空")
+            return
+        }
+        if (!newPsw.equals(confirmPsw)) {
+            showToast("两次输入新密码不一致")
+            return
+        }
+
+        showToast("修改成功")
+        finish()
+    }
+}

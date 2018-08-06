@@ -1,0 +1,251 @@
+package cn.iimedia.jb.mine.activity
+
+import android.content.Intent
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import cn.iimedia.jb.R
+import com.afollestad.materialdialogs.MaterialDialog
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.extension.loadImageFit
+import com.xiong.appbase.extension.loadLocalImage
+import com.xiong.appbase.utils.DialogUtils
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.MyUtils
+import com.yalantis.ucrop.entity.LocalMedia
+import kotlinx.android.synthetic.main.activity_user_info.*
+import vip.frendy.mediasel.model.FunctionConfig
+import vip.frendy.mediasel.model.LocalMediaLoader
+import vip.frendy.mediasel.model.PictureConfig
+import java.io.File
+import java.util.*
+
+/**
+ * Created by iiMedia on 2018/5/3.
+ * 用户信息页
+ */
+//class UserInfoActivity : BaseActivity(), View.OnClickListener, TakePhoto.TakeResultListener, InvokeListener {
+class UserInfoActivity : BaseActivity(), View.OnClickListener, PictureConfig.OnSelectResultCallback {
+    val els = ELS.getInstance()
+    //    private var takePhoto: TakePhoto? = null
+//    private var invokeParam: InvokeParam? = null
+    var popWindow: PopupWindow? = null
+    val CROP_DIMEN = 800
+    private var picturesSelected: ArrayList<LocalMedia> = ArrayList()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_user_info
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+//        getTakePhoto().onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
+        name.setText(els.getStringData(ELS.USERNAME))
+        icon.loadImageFit(els.getStringData(ELS.USER_IMG))
+
+        toolbar.setNavigationOnClickListener { finish() }
+        name_layout.setOnClickListener(this)
+        img_layout.setOnClickListener(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+//        getTakePhoto().onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.name_layout -> {
+                val nameDialog = DialogUtils.showEditText(mActivity, "修改用户名", "输入用户名",
+                        name.text.toString(),
+                        { dialog: MaterialDialog, input: CharSequence ->
+                            name.setText(input.toString())
+                        })
+                nameDialog.show()
+            }
+            R.id.img_layout -> {
+//                showPopWindow()
+                openAlbum()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        getTakePhoto().onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+//    override fun invoke(invokeParam: InvokeParam?): PermissionManager.TPermissionType {
+//        val type = PermissionManager.checkPermission(TContextWrap.of(mActivity), invokeParam!!.getMethod())
+//        if (PermissionManager.TPermissionType.WAIT == type) {
+//            this.invokeParam = invokeParam
+//        }
+//        return type
+//    }
+//
+//    override fun takeSuccess(result: TResult?) {
+//        //图片选择完成
+////        icon.loadLocalImage(File(result?.images?.get(0)?.compressPath))
+//        icon.loadLocalImage(File(result?.image?.compressPath))
+//    }
+//
+//    override fun takeFail(result: TResult?, msg: String?) {
+//    }
+//
+//    override fun takeCancel() {
+//    }
+//
+//    //获取相册操作实例
+//    fun getTakePhoto(): TakePhoto {
+//        if (takePhoto == null) {
+//            takePhoto = TakePhotoInvocationHandler.of(this)
+//                    .bind(TakePhotoImpl(this, this)) as TakePhoto
+//        }
+//        return takePhoto as TakePhoto
+//    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        val type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        PermissionManager.handlePermissionsResult(this, type, invokeParam, this)
+    }
+
+    fun openAlbum() {
+        val config = FunctionConfig()
+        config.setType(LocalMediaLoader.TYPE_IMAGE)
+        config.setCompress(true)
+        config.setEnablePixelCompress(true)
+        config.setEnableQualityCompress(true)
+        config.setMaxSelectNum(1)
+        config.setSelectMode(FunctionConfig.MODE_MULTIPLE)
+        config.setShowCamera(true)
+        config.setEnablePreview(true)
+        config.setEnableCrop(false)
+        config.setPreviewVideo(true)
+        config.setCheckNumMode(false)
+        config.setCompressQuality(100)
+        config.setImageSpanCount(4)
+        config.setSelectMedia(picturesSelected)
+        config.setCompressFlag(2) //1:系统默认，2:luban
+        config.setThemeStyle(ContextCompat.getColor(mActivity, R.color.bg_color4))
+        // 可以自定义底部 预览 完成 文字的颜色和背景色
+        config.setPreviewColor(ContextCompat.getColor(mActivity, R.color.white))
+        config.setCompleteColor(ContextCompat.getColor(mActivity, R.color.white))
+        config.setPreviewBottomBgColor(ContextCompat.getColor(mActivity, R.color.bg_color4))
+        config.setBottomBgColor(ContextCompat.getColor(mActivity, R.color.bg_color4))
+
+        // 先初始化参数配置，在启动相册
+        PictureConfig.init(config)
+        PictureConfig.getPictureConfig().openPhoto(mActivity, this)
+//        configCompress(getTakePhoto())
+//        configTakePhotoOption(getTakePhoto())
+//        getTakePhoto().onPickMultipleWithCrop(1, getCropOptions())
+    }
+
+    override fun onSelectSuccess(resultList: ArrayList<LocalMedia>) {
+        this.picturesSelected = resultList
+        val path = if (resultList.get(0).compressPath == null) resultList.get(0).path else resultList.get(0).compressPath
+        icon.loadLocalImage(File(path))
+    }
+
+    fun cameraCapture() {
+//        val file = File(Environment.getExternalStorageDirectory(),
+//                "/jb/" + System.currentTimeMillis() + ".jpg")
+//        if (!file.parentFile.exists()) {
+//            file.parentFile.mkdirs()
+//        }
+//        val imageUri: Uri
+//        if (Build.VERSION.SDK_INT < 24) {
+//            imageUri = Uri.fromFile(file)
+//        } else {
+//            imageUri = FileProvider.getUriForFile(mActivity, "cn.iimedia.jb.fileprovider", file)
+//        }
+//
+//        getTakePhoto().onPickFromCaptureWithCrop(imageUri, getCropOptions())
+    }
+
+    fun showPopWindow() {
+        //更换头像弹窗
+        val parent = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
+        val view = LayoutInflater.from(mActivity).inflate(R.layout.change_icon_window, null)
+        val camera = view.findViewById<TextView>(R.id.window_camera)
+        val album = view.findViewById<TextView>(R.id.window_album)
+        val cancel = view.findViewById<TextView>(R.id.window_cancel)
+        val onclickListener = View.OnClickListener { view: View? ->
+            if (popWindow!!.isShowing) {
+                popWindow?.dismiss()
+            }
+            when (view?.id) {
+                R.id.window_album -> {
+                    openAlbum()
+                }
+                R.id.window_camera -> {
+                    cameraCapture()
+                }
+                R.id.window_cancel -> {
+                }
+            }
+        }
+        if (popWindow == null) {
+            popWindow = PopupWindow(view, MyUtils.getScreenWidth(), MyUtils.getScreenHeight())
+            popWindow?.setAnimationStyle(R.style.popwindow_anim);
+            popWindow?.setFocusable(true);
+            popWindow?.setOutsideTouchable(false);
+//            val dw = ColorDrawable(0x30000000);
+//            popWindow?.setBackgroundDrawable(dw);
+            popWindow?.showAtLocation(parent, Gravity.BOTTOM, 0, 0)
+        } else {
+            popWindow?.showAtLocation(parent, Gravity.BOTTOM, 0, 0)
+        }
+        camera.setOnClickListener(onclickListener)
+        album.setOnClickListener(onclickListener)
+        cancel.setOnClickListener(onclickListener)
+    }
+
+//    private fun getCropOptions(): CropOptions {
+//        val builder = CropOptions.Builder()
+//        //宽高比
+////        builder.setAspectX(width).setAspectY(height)
+//        //宽x高固定尺寸
+//        builder.setOutputX(CROP_DIMEN).setOutputY(CROP_DIMEN)
+//        //是否使用自带裁剪,false则使用第三方的
+//        builder.setWithOwnCrop(true)
+//        return builder.create()
+//    }
+//
+//    private fun configTakePhotoOption(takePhoto: TakePhoto) {
+//        val builder = TakePhotoOptions.Builder()
+//        //使用TakePhoto相册
+//        builder.setWithOwnGallery(true)
+//        //纠正拍张角度
+//        builder.setCorrectImage(true)
+//        takePhoto.setTakePhotoOptions(builder.create())
+//    }
+//
+//    private fun configCompress(takePhoto: TakePhoto) {
+//        val maxSize = 102400
+//        val width = 800
+//        val height = 800
+//        //TakePhoto压缩
+//        val config: CompressConfig = CompressConfig.Builder().setMaxSize(maxSize)
+//                .setMaxPixel(if (width >= height) width else height)
+//                //压缩后保存原图
+//                .enableReserveRaw(true)
+//                .create()
+//        //鲁班压缩
+////        val option = LubanOptions.Builder().setMaxHeight(height).setMaxWidth(width).setMaxSize(maxSize).create()
+////        config = CompressConfig.ofLuban(option)
+////        config.enableReserveRaw(true)
+//        //是否压缩图片,第一个是参数传null不压缩,第二个控制显示进度条
+//        takePhoto.onEnableCompress(config, true)
+//    }
+
+}
+
+

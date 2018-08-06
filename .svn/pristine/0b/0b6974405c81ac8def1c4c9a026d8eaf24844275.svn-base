@@ -1,0 +1,69 @@
+package cn.iimedia.jb.homepage.adapter
+
+import android.content.Context
+import android.graphics.Color
+import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToTopicDetail
+import cn.iimedia.jb.http.bean.Special
+import com.xiong.appbase.extension.loadImageFit
+import com.xiong.appbase.utils.MyUtils
+import kotlinx.android.synthetic.main.topic_item.view.*
+
+/**
+ * Created by iiMedia on 2018/6/8.
+ * 专题列表adapter
+ */
+class TopicListAdapter(val context: Context, val specialList: ArrayList<Special>)
+    : RecyclerView.Adapter<TopicListAdapter.TopicViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopicViewHolder {
+        return TopicViewHolder(context, LayoutInflater.from(context)
+                .inflate(R.layout.topic_item, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: TopicViewHolder, position: Int) {
+        holder.bind(specialList[position])
+    }
+
+    override fun getItemCount(): Int = specialList.size
+
+    class TopicViewHolder(val ctx: Context, view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(data: Special) {
+            //设置整个item宽高比为2:1
+            val rootLp = itemView.root.layoutParams
+            rootLp.height = (MyUtils.getScreenWidth() - MyUtils.dp2px(32f)) / 2
+            itemView.root.layoutParams = rootLp
+            //设置标题内容宽度
+            val lp = itemView.rl_text.layoutParams
+            lp.width = MyUtils.getScreenWidth() / 2
+            itemView.rl_text.layoutParams = lp
+            itemView.place_view.layoutParams = lp
+            itemView.bg_img.loadImageFit(data.img)
+            itemView.topic_name.text = data.title
+            //设置专题副标题
+            val sb = StringBuilder()
+            for ((i, s) in data.rankInfoName.withIndex()) {
+                //最后一位不要加/
+                if (i == data.rankInfoName.size - 1) {
+                    sb.append(s)
+                } else {
+                    sb.append("$s/")
+                }
+            }
+            itemView.topic_content.text = sb
+            itemView.setOnClickListener { intentToTopicDetail(ctx, data.id) }
+            //设置颜色
+            val color = data.colorOne
+            if (color != null && !TextUtils.isEmpty(color.toString())) {
+                val colorParse = Color.parseColor(color.toString())
+                itemView.topic_label?.setBackgroundColor(colorParse)
+                itemView.place_view?.setBackgroundColor(colorParse)
+            }
+        }
+    }
+}

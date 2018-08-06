@@ -1,0 +1,51 @@
+package cn.iimedia.jb.rankingBrand.adapter
+
+import android.content.Context
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToBrandDetail
+import cn.iimedia.jb.http.bean.RankingBrandsList
+import com.xiong.appbase.utils.MyUtils
+import kotlinx.android.synthetic.main.brand_item.view.*
+
+/**
+ * Created by iiMedia on 2018/4/25.
+ * 品牌列表adapter
+ */
+class BrandListAdapter(val ctx: Context, val brandList: ArrayList<RankingBrandsList>) : RecyclerView.Adapter<BrandListAdapter.ViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(ctx, LayoutInflater.from(ctx).inflate(R.layout.brand_item, null))
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(position, brandList[position])
+    }
+
+    override fun getItemCount(): Int = brandList.size
+
+    class ViewHolder(val ctx: Context, view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(position: Int, data: RankingBrandsList) {
+            itemView.iv_slash.drawable.level = 0
+            itemView.tv_index.text = (position + 1).toString()
+
+            itemView.tv_value.text = MyUtils.formatDouble2(data.score.toDouble())
+            itemView.tv_brand_name.text = data.brandName
+            itemView.tv_desc.text = data.description
+            if (position % 2 == 0) {
+                itemView.iv_tm.setImageResource(R.mipmap.img_tmall)
+                itemView.iv_tm.setOnClickListener { MyUtils.gotoTmShop(ctx, 540558512707) }
+            } else {
+                itemView.iv_tm.setImageResource(R.mipmap.img_jd)
+                itemView.iv_tm.setOnClickListener { MyUtils.gotoJdShop(ctx, 5113099) }
+            }
+
+            itemView.setOnClickListener {
+                intentToBrandDetail(ctx, data.id.toInt())
+            }
+        }
+    }
+}

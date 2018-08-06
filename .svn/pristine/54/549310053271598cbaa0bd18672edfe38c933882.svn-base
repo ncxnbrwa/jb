@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/ranking_top_layout" />
+
+    <include layout="@layout/ranking_middle_layout" />
+
+    <!--<include layout="@layout/ranking_bottom_layout"/>-->
+    <!--<include layout="@layout/push_up_layout" />-->
+    <include layout="@layout/push_down_layout" />
+</LinearLayout>

@@ -1,0 +1,62 @@
+package cn.iimedia.jb.http.bean
+
+/**
+ * Created by iiMedia on 2018/5/16.
+ */
+
+class Bean {
+
+    /**
+     * result : [{"id":1007,"parentId":0,"name":"雅诗兰黛（Estee Lauder）","brandName":"雅诗兰黛 ESTEE LAUDER","description":"雅诗兰黛是美国雅诗兰黛公司旗下的化妆品旗舰品牌，以抗衰修护护肤品闻名。如今，雅诗兰黛旗下的护肤，彩妆以及香氛产品都成为了科学与艺术完美结合的最佳范例，已在全球130多个国家销售。","mainType":1,"mainTypeName":null,"subType":1002,"subTypeName":null,"colorLogo":"http://images.iimedia.cn/50001a148976067a2865934fbf93ca2f53e1c15625ac384083183e651f33c4f4dd5e6?p=0","grepLogo":"http://images.iimedia.cn/500014f7552b83541b5dea8698d61075eaccbab74ba6de92a0bcf74332a531d68f5c7?p=0","status":1,"authorId":0,"score":null,"imTalk":null,"estTime":"1946年","estAddr":null,"createTime":1521172534000,"updateTime":1521172534000}]
+     * code : 1
+     * msg : success
+     */
+
+    var code: String? = null
+    var msg: String? = null
+    var result: List<ResultBean>? = null
+
+    class ResultBean {
+        /**
+         * id : 1007
+         * parentId : 0
+         * name : 雅诗兰黛（Estee Lauder）
+         * brandName : 雅诗兰黛 ESTEE LAUDER
+         * description : 雅诗兰黛是美国雅诗兰黛公司旗下的化妆品旗舰品牌，以抗衰修护护肤品闻名。如今，雅诗兰黛旗下的护肤，彩妆以及香氛产品都成为了科学与艺术完美结合的最佳范例，已在全球130多个国家销售。
+         * mainType : 1
+         * mainTypeName : null
+         * subType : 1002
+         * subTypeName : null
+         * colorLogo : http://images.iimedia.cn/50001a148976067a2865934fbf93ca2f53e1c15625ac384083183e651f33c4f4dd5e6?p=0
+         * grepLogo : http://images.iimedia.cn/500014f7552b83541b5dea8698d61075eaccbab74ba6de92a0bcf74332a531d68f5c7?p=0
+         * status : 1
+         * authorId : 0
+         * score : null
+         * imTalk : null
+         * estTime : 1946年
+         * estAddr : null
+         * createTime : 1521172534000
+         * updateTime : 1521172534000
+         */
+
+        var id: Int = 0
+        var parentId: Int = 0
+        var name: String? = null
+        var brandName: String? = null
+        var description: String? = null
+        var mainType: Int = 0
+        var mainTypeName: Any? = null
+        var subType: Int = 0
+        var subTypeName: Any? = null
+        var colorLogo: String? = null
+        var grepLogo: String? = null
+        var status: Int = 0
+        var authorId: Int = 0
+        var score: Any? = null
+        var imTalk: Any? = null
+        var estTime: String? = null
+        var estAddr: Any? = null
+        var createTime: Long = 0
+        var updateTime: Long = 0
+    }
+}

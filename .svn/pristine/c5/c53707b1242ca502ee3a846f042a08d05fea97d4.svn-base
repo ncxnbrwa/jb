@@ -1,0 +1,11 @@
+package cn.iimedia.jb.http.bean
+
+/**
+ * Created by iiMedia on 2018/5/9.
+ * 和用户数据相关的实体类
+ */
+data class ContactUsBean(
+        val code: Number,
+        val data: Any?,
+        val msg: String
+)

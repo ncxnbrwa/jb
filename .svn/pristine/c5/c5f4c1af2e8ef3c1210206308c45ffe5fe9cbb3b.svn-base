@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="240dp"
+    android:foreground="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/bg_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@mipmap/test_topic" />
+
+    <!--给RelativeLayout设置透明度会导致子视图也变透明-->
+    <View
+        android:id="@+id/place_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:alpha="0.8"
+        android:background="#173C10" />
+
+    <RelativeLayout
+        android:id="@+id/rl_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:alpha="0.8"
+        android:background="@color/transparent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/topic_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#173C10"
+            android:padding="4dp"
+            android:text="专题"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/topic_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/topic_label"
+            android:layout_marginTop="8dp"
+            android:text="小家电推荐榜"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/topic_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/topic_name"
+            android:layout_marginTop="4dp"
+            android:gravity="bottom"
+            android:lineSpacingExtra="6dp"
+            android:text="吹风机 / 风扇 / 微波炉 / 电饭煲 / 煮蛋器 / 蒸脸仪 / 电动牙刷 / 洁面仪 / 香薰机"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+</FrameLayout>

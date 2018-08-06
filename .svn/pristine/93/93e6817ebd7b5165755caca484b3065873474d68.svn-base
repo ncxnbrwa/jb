@@ -1,0 +1,39 @@
+package cn.iimedia.jb.homepage.adapter
+
+import android.content.Context
+import android.support.v4.view.PagerAdapter
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import cn.iimedia.jb.common.intentToRankingBrand
+import cn.iimedia.jb.http.bean.BannerResult
+import com.xiong.appbase.extension.loadImageFit
+
+/**
+ * Created by iiMedia on 2018/4/23.
+ * 轮播adapter
+ */
+class BannerAdapter(val context: Context, val list: ArrayList<BannerResult>) : PagerAdapter() {
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
+        return view == `object`
+    }
+
+    override fun getCount(): Int = list.size
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val img = ImageView(context)
+        img.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT)
+        img.scaleType = ImageView.ScaleType.CENTER_CROP
+        img.loadImageFit(list[position].rankInfo.imgUrl)
+        img.setOnClickListener {
+            intentToRankingBrand(context, (list[position].rankInfo.id).toInt())
+        }
+        container.addView(img)
+        return img
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(`object` as ImageView)
+    }
+}

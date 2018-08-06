@@ -1,0 +1,124 @@
+package cn.iimedia.jb.http;
+
+import com.xiong.appbase.http.RequestEngine;
+
+import cn.iimedia.jb.http.bean.BannerBean;
+import cn.iimedia.jb.http.bean.BrandDetailBean;
+import cn.iimedia.jb.http.bean.BrandListBean;
+import cn.iimedia.jb.http.bean.ClassifyLevelBean;
+import cn.iimedia.jb.http.bean.CommonBean;
+import cn.iimedia.jb.http.bean.ContactUsBean;
+import cn.iimedia.jb.http.bean.RankingBrandListBean;
+import cn.iimedia.jb.http.bean.RankingDetailBean;
+import cn.iimedia.jb.http.bean.RankingIndexBean;
+import cn.iimedia.jb.http.bean.RankingListBean;
+import cn.iimedia.jb.http.bean.RankingPropertyBean;
+import cn.iimedia.jb.http.bean.RankingSelectBean;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 接口
+ */
+
+public interface APIConstants {
+    //统一都带上imei,暂时还没用
+
+    @POST(RequestEngine.GET_BANNER)
+    Call<BannerBean> getBanner(@Query("position") int position,
+                               @Query("imei") String imei);
+
+    //page为页码,默认0,size为每页数量,默认10
+    @GET(RequestEngine.GET_LATEST_LIST)
+    Call<RankingListBean> getLatestList(@Query("page") int page,
+                                        @Query("size") int size,
+                                        @Query("imei") String imei);
+
+    //同上
+    @GET(RequestEngine.GET_HOTTEST_LIST)
+    Call<RankingListBean> getHottestList(@Query("page") int page,
+                                         @Query("size") int size,
+                                         @Query("imei") String imei);
+
+    //小众精选
+    @GET(RequestEngine.FEATURED_BRAND_LIST)
+    Call<BrandListBean> getFeatruedList(@Query("imei") String imei);
+
+    //热门品牌
+    @GET(RequestEngine.HOT_BRAND_LIST)
+    Call<BrandListBean> getHotBrandList(@Query("imei") String imei);
+
+    //property 替换url中的 {property},比如综合为35
+    //rankInfoId 榜单id
+    @GET(RequestEngine.RANKING_PROPERTY)
+    Call<RankingPropertyBean> getRankingProPerty(@Path("property") int property,
+                                                 @Query("rankInfoId") int rankInfoId,
+                                                 @Query("imei") String imei);
+
+    //榜单品牌详情
+    @GET(RequestEngine.RANKING_BRAND_DETAIL)
+    Call<RankingBrandListBean> getRankingBrandDetail(@Query("rankInfoId") int rankInfoId,
+                                                     @Query("imei") String imei);
+
+    //榜单详情
+    @GET(RequestEngine.RANKING_DETAIL)
+    Call<RankingDetailBean> getRankingDetail(@Path("rankInfoId") int rankInfoId,
+                                             @Query("imei") String imei);
+
+    //品牌详情
+    @GET(RequestEngine.BRAND_DETAIL)
+    Call<BrandDetailBean> getBrandDetail(@Path("brandId") int brandId,
+                                         @Query("imei") String imei);
+
+    //入选榜单
+    @GET(RequestEngine.RANKING_SELECT_LIST)
+    Call<RankingSelectBean> getBrandSelect(@Path("brandId") int brandId,
+                                           @Query("page") int page,
+                                           @Query("size") int size,
+                                           @Query("imei") String imei);
+
+    //根据品牌获取榜单排名
+    //id,品牌ID
+    //rankid ,榜单ID
+    @GET(RequestEngine.RANKING_INDEX)
+    Call<RankingIndexBean> getRankingIndex(@Query("id") int brandId,
+                                           @Query("rankId") int rankId,
+                                           @Query("imei") String imei);
+
+    //榜单大全一级分类
+    @GET(RequestEngine.CLASSIFY_ONE_LEVEL)
+    Call<ClassifyLevelBean> getOneLevel(@Query("imei") String imei);
+
+    //榜单大全二级分类
+    @GET(RequestEngine.CLASSIFY_TWO_LEVEL)
+    Call<ClassifyLevelBean> getTwoLevel(@Query("id") int id,
+                                        @Query("imei") String imei);
+
+    @GET(RequestEngine.CLASSIFY_THREE_LEVEL)
+    Call<RankingListBean> getThreeLevel(@Path("typeId") int typeId,
+                                        @Query("imei") String imei);
+
+    @POST(RequestEngine.CONTACT_US)
+    Call<ContactUsBean> contactUs(@Query("phone") String phone,
+                                  @Query("email") String email,
+                                  @Query("name") String name,
+                                  @Query("message") String message,
+                                  @Query("imei") String imei);
+
+    //获取图形验证码
+    @GET(RequestEngine.GET_IMG_CODE)
+    Call<ResponseBody> getImgCode(@Query("ph")String ph,
+                                  @Query("imei")String imei);
+
+    //发送验证码ph：手机号码；pus：1注册；2：其他；vc:图形验证码;imei：手机标识；
+    @POST(RequestEngine.SEND_CODE)
+    Call<CommonBean> sendCode(@Query("ph") String ph,
+                              @Query("pus") int pus,
+                              @Query("vc") String vc,
+                              @Query("imei") String imei);
+}

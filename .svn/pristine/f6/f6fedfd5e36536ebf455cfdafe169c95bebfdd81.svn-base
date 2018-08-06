@@ -1,0 +1,214 @@
+package com.myxianwen.share;
+
+import android.content.Context;
+
+import com.iimedia.analytics.MobileClickAgent;
+import com.iimedia.appbase.utils.NetworkUtils;
+import com.iimedia.appbase.utils.SystemUtils;
+
+import java.io.Serializable;
+
+/**
+ * Created by iiMedia on 2016/4/8.
+ */
+public class PerformanceData implements Serializable {
+    public static boolean TURN_ON = true;
+    private static PerformanceData performanceData = new PerformanceData();
+    public static PerformanceData getInstance() {
+        return performanceData;
+    }
+
+    public static final int NEWS_WEB = 0;
+    public static final int NEWS_RELATE = 1;
+    public static final int NEWS_COMMENT = 2;
+    public static final int NEWS_RECOMMEND = 3;
+    public static final int NEWS_LIST = 4;
+    public static final int NEWS_CHANNEL_LIST = 5;
+
+    public static final int VIDEO_ERROR = 6;
+    public static final int UID_IMEI = 7;
+
+    public static final int NEWS_SUBJECT = 8;
+
+    public static final int ACTION_SHARE = 9;
+    public static final int ACTION_START_FM_PUSH = 10;
+
+    public long news_webStartTime = 0;
+    public long news_relateStartTime = 0;
+    public long news_commentStartTime = 0;
+    public long news_recommendStartTime = 0;
+    public long news_listStartTime = 0;
+    public long news_channellistStartTime = 0;
+    public long uid_imeiStartTime = 0;
+    public long news_subjectStartTime = 0;
+
+    public void startToWatch(int type) {
+        if(!TURN_ON) return;
+
+        switch (type) {
+            case NEWS_WEB:
+                news_webStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_RELATE:
+                news_relateStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_COMMENT:
+                news_commentStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_RECOMMEND:
+                news_recommendStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_LIST:
+                news_listStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_CHANNEL_LIST:
+                news_channellistStartTime = System.currentTimeMillis();
+                break;
+            case UID_IMEI:
+                uid_imeiStartTime = System.currentTimeMillis();
+                break;
+            case NEWS_SUBJECT:
+                news_subjectStartTime = System.currentTimeMillis();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void endToWatch(final Context context, int type, boolean isSuccess) {
+        if(!TURN_ON || context == null) return;
+
+        switch (type) {
+            case NEWS_WEB:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_WEB",
+                            String.valueOf(System.currentTimeMillis() - news_webStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_WEB", String.valueOf(-1));
+                }
+                break;
+            case NEWS_RELATE:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_RELATE",
+                            String.valueOf(System.currentTimeMillis() - news_relateStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_RELATE", String.valueOf(-1));
+                }
+                break;
+            case NEWS_COMMENT:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_COMMENT",
+                            String.valueOf(System.currentTimeMillis() - news_commentStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_COMMENT", String.valueOf(-1));
+                }
+                break;
+            case NEWS_RECOMMEND:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_RECOMMEND",
+                            String.valueOf(System.currentTimeMillis() - news_recommendStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_RECOMMEND", String.valueOf(-1));
+                }
+                break;
+            case NEWS_LIST:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_LIST",
+                            String.valueOf(System.currentTimeMillis() - news_listStartTime));
+                } else {
+                    SystemUtils.addBackgroundTaskToThreadPool(new SystemUtils.IBackgroundTaskListener() {
+                        @Override
+                        public void onRun() {
+                            int baidu = NetworkUtils.ping("www.baidu.com");
+                            int xianwen = NetworkUtils.ping("api.myxianwen.cn");
+                            MobileClickAgent.setPerformanceData(context, "NEWS_LIST",
+                                    String.valueOf(-1) + "|pingbaidu" + baidu + "|pingxianwen" + xianwen);
+                        }
+                    });
+                }
+                break;
+            case NEWS_CHANNEL_LIST:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_CHANNEL_LIST",
+                            String.valueOf(System.currentTimeMillis() - news_channellistStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_CHANNEL_LIST", String.valueOf(-1));
+                }
+                break;
+            case UID_IMEI:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "UID_IMEI",
+                            String.valueOf(System.currentTimeMillis() - uid_imeiStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "UID_IMEI", String.valueOf(-1));
+                }
+                break;
+            case NEWS_SUBJECT:
+                if(isSuccess) {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_SUBJECT",
+                            String.valueOf(System.currentTimeMillis() - news_subjectStartTime));
+                } else {
+                    MobileClickAgent.setPerformanceData(context, "NEWS_SUBJECT", String.valueOf(-1));
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void endToWatch(final Context context, int type, boolean isSuccess, final int id, final String visitid, final String errorCode) {
+        if(!TURN_ON || context == null) return;
+
+        switch (type) {
+            case NEWS_WEB:
+                if(isSuccess) {
+                    long coastTime = System.currentTimeMillis() - news_webStartTime;
+                    MobileClickAgent.setPerformanceData(context, "NEWS_WEB",
+                            String.valueOf(coastTime) + "|id" + String.valueOf(id) + "|visitid" + visitid);
+                } else {
+                    SystemUtils.addBackgroundTaskToThreadPool(new SystemUtils.IBackgroundTaskListener() {
+                        @Override
+                        public void onRun() {
+                            int baidu = NetworkUtils.ping("www.baidu.com");
+                            int xianwen = NetworkUtils.ping("api.myxianwen.cn");
+                            MobileClickAgent.setPerformanceData(context, "NEWS_WEB",
+                                    String.valueOf(-1) + "|id" + String.valueOf(id) + "|visitid" + visitid
+                                            + "|errorCode" + errorCode + "|pingbaidu" + baidu + "|pingxianwen" + xianwen);
+                        }
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void recordError(Context context, int type, int id) {
+        if(!TURN_ON || context == null) return;
+
+        switch (type) {
+            case VIDEO_ERROR:
+                MobileClickAgent.setPerformanceData(context, "VIDEO_ERROR",
+                        String.valueOf(-1) + "|id" + String.valueOf(id));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void recordAction(Context context, int type, int id) {
+        if(!TURN_ON || context == null) return;
+
+        switch (type) {
+            case ACTION_SHARE:
+                MobileClickAgent.setPerformanceData(context, "ACTION_SHARE", String.valueOf(id));
+                break;
+            case ACTION_START_FM_PUSH:
+                MobileClickAgent.setPerformanceData(context, "ACTION_START_FM_PUSH", String.valueOf(id));
+                break;
+            default:
+                break;
+        }
+    }
+
+}

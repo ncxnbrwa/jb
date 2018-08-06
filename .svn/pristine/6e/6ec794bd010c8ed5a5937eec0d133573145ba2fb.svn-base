@@ -1,0 +1,68 @@
+package cn.iimedia.jb.classify
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.classify.adapter.TwoLevelAdapter
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.common.TWO_LEVEL_ID
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.ClassifyLevelBean
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.fragment_two_level.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/8.
+ * 榜单大全二级分类页面
+ */
+class FragmentTwoLevel : BaseFragment() {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_two_level
+    }
+
+    companion object {
+        fun getInstance(bundle: Bundle): FragmentTwoLevel {
+            val f = FragmentTwoLevel()
+            f.arguments = bundle
+            return f
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        two_level_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+    }
+
+    fun getTwoLevelData() {
+        baseActivity?.showLoadingDialog()
+        val bundle = arguments
+        val levelId: Int = bundle!!.getInt(TWO_LEVEL_ID, 0)
+
+        val twoLevelCall = api.getTwoLevel(levelId, els.getStringData(ELS.IMEI))
+        twoLevelCall.enqueue(object : Callback<ClassifyLevelBean> {
+            override fun onResponse(call: Call<ClassifyLevelBean>?, response: Response<ClassifyLevelBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val dataList = bean.resuleList
+                    two_level_list?.adapter = TwoLevelAdapter(mActivity, dataList)
+                }
+                baseActivity?.dismissLoadingDialog()
+            }
+
+            override fun onFailure(call: Call<ClassifyLevelBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "二级分类数据请求失败")
+                baseActivity?.dismissLoadingDialog()
+            }
+        })
+    }
+}

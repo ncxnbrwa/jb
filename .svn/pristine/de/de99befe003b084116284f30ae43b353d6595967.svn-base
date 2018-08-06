@@ -1,0 +1,14 @@
+package cn.iimedia.jb.common
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 一些测试参数
+ */
+val testImgUrl = arrayListOf<String>("https://imgsrc.baidu.com/baike/pic/item/64380cd7912397ddd79947795282b2b7d1a287ef.jpg"
+        , "https://b-ssl.duitang.com/uploads/item/201511/10/20151110221900_Zdxe8.thumb.700_0.jpeg"
+        , "https://b-ssl.duitang.com/uploads/item/201409/30/20140930112403_FMWVG.thumb.700_0.jpeg")
+
+val HTTP_LOG_TAG = "http_request"
+
+val RANK_INFO_ID = "rankInfoId"
+val BRAND_ID = "brandId"

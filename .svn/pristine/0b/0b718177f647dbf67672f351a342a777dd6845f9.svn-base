@@ -1,0 +1,279 @@
+package cn.iimedia.jb.homepage
+
+import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.common.testImgUrl
+import cn.iimedia.jb.homepage.adapter.BannerAdapter
+import cn.iimedia.jb.homepage.adapter.FeatureBrandAdapter
+import cn.iimedia.jb.homepage.adapter.HottestListAdapter
+import cn.iimedia.jb.homepage.adapter.LatestListAdapter
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.BannerBean
+import cn.iimedia.jb.http.bean.BrandListBean
+import cn.iimedia.jb.http.bean.RankingListBean
+import cn.iimedia.jb.http.bean.RankingListData
+import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import com.tmall.ultraviewpager.UltraViewPager
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.custom.ScaleTransformer
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.http.RequestEngine2
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.home_banner_item.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+
+/**
+ * Created by iiMedia on 2018/4/23.
+ * 主页
+ */
+class FragmentHome : BaseFragment(), OnRefreshListener, OnLoadMoreListener {
+    var api: APIConstants? = null
+    var api2: APIConstants? = null
+    val horizontal = LinearLayoutManager.HORIZONTAL
+    val els = ELS.getInstance()
+    val imgList: ArrayList<String> = ArrayList()
+    val latestList: ArrayList<RankingListData> = ArrayList()
+    var latestAdapter: LatestListAdapter? = null
+    var latestPage = 0
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_home
+    }
+
+    companion object {
+        fun getInstance(): FragmentHome {
+            val fragment = FragmentHome()
+//            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
+    override fun init() {
+        api = RequestEngine.createService(APIConstants::class.java)
+        api2 = RequestEngine2.createService(APIConstants::class.java)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        refresh_layout.setOnRefreshListener(this)
+        refresh_layout.setOnLoadMoreListener(this)
+//        search?.setTextStyle(12f, R.color.text_color1, R.color.text_color1)
+//        search?.setIconifiedByDefault(true)
+//        search?.isFocusable = true
+//        search?.isIconified = false
+//        search?.requestFocusFromTouch()
+
+        //提取出来,防止重复使用
+        hottest_list.layoutManager = LinearLayoutManagerWrapper(context, horizontal, false)
+        hottest_list.addDivider(mActivity, R.drawable.grid_white_divider, horizontal)
+        featured_list.layoutManager = LinearLayoutManagerWrapper(mActivity, horizontal, false)
+        featured_list.addDivider(mActivity, R.drawable.grid_white_divider, horizontal)
+        latest_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        latest_list.isNestedScrollingEnabled = false
+        latest_list.addDivider(mActivity, R.drawable.vertical_gray_divider)
+        getData()
+    }
+
+    override fun onRefresh(refreshLayout: RefreshLayout?) {
+        latestList.clear()
+        refresh_layout?.setNoMoreData(false)
+        latestPage = 0
+        getData()
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout?) {
+        latestPage++
+        getLatestData()
+    }
+
+    fun getData() {
+//        getBannerData()
+        configBanner(vp, testImgUrl)
+        getHottestData()
+        getFeaturedData()
+        getLatestData()
+    }
+
+    fun getBannerData() {
+        refresh_layout.autoRefresh()
+        val getBannerCall = api?.getBanner(0, els.getStringData(ELS.IMEI))
+        getBannerCall?.enqueue(object : Callback<BannerBean> {
+            override fun onResponse(call: Call<BannerBean>?, response: Response<BannerBean>?) {
+                val bean = response?.body()
+                if (bean?.code.equals("1")) {
+                    val list = bean?.result
+                    if (list!!.isNotEmpty()) {
+                        home_banner_root.visibility = View.VISIBLE
+                        for (i in list) {
+                            imgList.add(i.rankInfo.imgUrl)
+                        }
+                        configBanner(vp, imgList)
+                    } else {
+                        home_banner_root.visibility = View.GONE
+                    }
+                }
+                if (refresh_layout.isRefreshing)
+                    refresh_layout.finishRefresh()
+            }
+
+            override fun onFailure(call: Call<BannerBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "轮播数据请求失败")
+                home_banner_root.visibility = View.GONE
+                if (refresh_layout.isRefreshing)
+                    refresh_layout.finishRefresh()
+            }
+        })
+    }
+
+    fun configBanner(vp: UltraViewPager, imgList: ArrayList<String>) {
+        //配置轮播
+        vp.setScrollMode(UltraViewPager.ScrollMode.HORIZONTAL)
+        vp.adapter = BannerAdapter(mActivity, imgList)
+        vp.setMultiScreen(0.7f)
+//        vp.setItemRatio(2.0) //子视图的宽高比等于1.0F
+        vp.setRatio(2.0f) //以设定的宽高比来绘制UltraViewPager。setRatio优先级高于setItemRatio.
+        vp.setMaxHeight(800)
+        vp.setAutoMeasureHeight(true) //自动调整到child view的高度
+        vp.setPageTransformer(true, ScaleTransformer())
+
+        indicator_view.totalPage = imgList.size
+        indicator_view.bindViewPager(vp.viewPager)
+//        //内置indicator初始化
+//        vp.initIndicator()
+//        //设置indicator样式
+//        vp.getIndicator()
+//                .setOrientation(UltraViewPager.Orientation.HORIZONTAL)
+//                .setFocusResId(R.mipmap.indicator_sel)
+//                .setNormalResId(R.mipmap.indicator)
+//                .setIndicatorPadding(4)
+//                .setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM)
+//                .build()
+        //设定页面循环播放
+        vp.setInfiniteLoop(true)
+        //设定页面自动切换,间隔2秒
+        vp.setAutoScroll(2000)
+    }
+
+    fun getHottestData() {
+        //请求最热榜单数据
+        val getHottestCall = api?.getHottestList(0, 10, els.getStringData(ELS.IMEI))
+        getHottestCall?.enqueue(object : Callback<RankingListBean> {
+            override fun onFailure(call: Call<RankingListBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "获取最热榜单列表失败")
+                home_hottest_root.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<RankingListBean>?, response: Response<RankingListBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val dataList = bean.data
+                    if (dataList.isNotEmpty()) {
+                        //有数据时才显示整个模块
+                        home_hottest_root.visibility = View.VISIBLE
+//                        hottest_list.layoutManager = LinearLayoutManagerWrapper(context, horizontal, false)
+//                        hottest_list.addDivider(mActivity, R.drawable.grid_white_divider, horizontal)
+                        hottest_list.adapter = HottestListAdapter(mActivity, dataList)
+                    } else {
+                        home_hottest_root.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+
+    fun getFeaturedData() {
+        //获取小众精选数据
+//        val getFeaturedCall = api?.getFeatruedList(els.getStringData(ELS.IMEI))
+        val getHotBrandCall = api?.getHotBrandList(els.getStringData(ELS.IMEI))
+        getHotBrandCall?.enqueue(object : Callback<BrandListBean> {
+            override fun onFailure(call: Call<BrandListBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "小众精选请求失败")
+                home_featured_root.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<BrandListBean>?, response: Response<BrandListBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val dataList = bean.data
+                    if (dataList.isNotEmpty()) {
+                        //有数据时才显示整个模块
+                        home_featured_root.visibility = View.VISIBLE
+//                        featured_list.layoutManager = LinearLayoutManagerWrapper(mActivity, horizontal, false)
+//                        featured_list.addDivider(mActivity, R.drawable.grid_white_divider, horizontal)
+                        featured_list.adapter = FeatureBrandAdapter(mActivity, dataList)
+                    } else {
+                        home_featured_root.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+
+    fun getLatestData() {
+        //获取最新榜单数据
+        val getLatestListCall = api?.getLatestList(latestPage, 10, els.getStringData(ELS.IMEI))
+        getLatestListCall?.enqueue(object : Callback<RankingListBean> {
+            override fun onResponse(call: Call<RankingListBean>?, response: Response<RankingListBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val dataList = bean.data
+                    if (dataList.isNotEmpty()) {
+                        //有数据时才显示整个模块
+                        home_latest_root.visibility = View.VISIBLE
+//                        latest_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+//                        latest_list.isNestedScrollingEnabled = false
+//                        latest_list.addDivider(mActivity, R.drawable.vertical_gray_divider)
+                        latestList.addAll(dataList)
+                        if (dataList.size < 10) {
+                            refresh_layout.setNoMoreData(true)
+                        } else {
+                            refresh_layout.setNoMoreData(false)
+                        }
+                        initLatestAdapter()
+                    } else {
+                        home_latest_root.visibility = View.GONE
+                    }
+                }
+                if (refresh_layout.isRefreshing)
+                    refresh_layout.finishRefresh()
+                if (refresh_layout.isLoading)
+                    refresh_layout.finishLoadMore()
+            }
+
+            override fun onFailure(call: Call<RankingListBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "最新榜单获取失败")
+                home_latest_root.visibility = View.GONE
+                if (refresh_layout.isRefreshing)
+                    refresh_layout.finishRefresh()
+                if (refresh_layout.isLoading)
+                    refresh_layout.finishLoadMore()
+            }
+        })
+    }
+
+    fun initLatestAdapter() {
+        if (latestAdapter == null) {
+            latestAdapter = LatestListAdapter(mActivity, latestList)
+            latest_list.adapter = latestAdapter
+        } else {
+            latestAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    override fun onDestroy() {
+        vp.viewPager.clearOnPageChangeListeners()
+        super.onDestroy()
+    }
+}

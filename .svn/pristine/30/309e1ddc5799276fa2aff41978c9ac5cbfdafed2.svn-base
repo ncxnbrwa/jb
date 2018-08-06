@@ -1,0 +1,71 @@
+package cn.iimedia.jb.classify.adapter
+
+import android.content.Context
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.Config
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.RankingListBean
+import com.xiong.appbase.extension.addGridDivider
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.MyUtils
+import kotlinx.android.synthetic.main.two_level_item.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/8.
+ * 二级分类adapter
+ */
+class TwoLevelAdapter(val context: Context, val resuleList: ArrayList<ArrayList<Any?>>)
+    : RecyclerView.Adapter<TwoLevelAdapter.TwoLevelHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TwoLevelHolder {
+        return TwoLevelHolder(context, LayoutInflater.from(context)
+                .inflate(R.layout.two_level_item, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: TwoLevelHolder, position: Int) {
+        holder.bind(resuleList[position])
+    }
+
+    override fun getItemCount(): Int = resuleList.size
+
+    class TwoLevelHolder(val context: Context, view: View) : RecyclerView.ViewHolder(view) {
+        val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+        val els: ELS = ELS.getInstance()
+
+        fun bind(anyList: ArrayList<Any?>) {
+            itemView.title.text = anyList[1].toString()
+            val typeId = (anyList[0] as Number).toInt()
+            itemView.three_level_list.layoutManager = GridLayoutManager(context, 3)
+            itemView.three_level_list.addGridDivider(context, 16)
+
+            val threeLevelCall = api.getThreeLevel(typeId, els.getStringData(ELS.IMEI))
+            threeLevelCall.enqueue(object : Callback<RankingListBean> {
+                override fun onFailure(call: Call<RankingListBean>?, t: Throwable?) {
+                    DLog.w(Config.HTTP_LOG_TAG, "三级分类请求失败")
+                    MyUtils.showToast("榜单信息获取失败")
+                }
+
+                override fun onResponse(call: Call<RankingListBean>?, response: Response<RankingListBean>?) {
+                    val bean = response?.body()
+                    if (bean?.code == 1) {
+                        val dataList = bean.data
+                        if (dataList.isNotEmpty()) {
+                            itemView.three_level_list.adapter = ThreeLevelAdapter(context, bean.data)
+                        }
+                    }
+                }
+            })
+
+        }
+    }
+}

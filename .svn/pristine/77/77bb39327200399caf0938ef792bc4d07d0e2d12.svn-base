@@ -1,0 +1,28 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import cn.iimedia.jb.R
+import com.xiong.appbase.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_abous_us.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 关于我们
+ */
+class AboutUsActivity : BaseActivity() {
+
+    override fun getLayoutId(): Int = R.layout.activity_abous_us
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+
+        web?.loadUrl("http://ranking.iimedia.cn/brand-contact.html")
+//        web.loadUrl("https://www.baidu.com/")
+    }
+
+    override fun onDestroy() {
+        web?.destroy()
+        super.onDestroy()
+    }
+}

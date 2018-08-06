@@ -1,0 +1,48 @@
+package cn.iimedia.jb.homepage.adapter
+
+import android.content.Context
+import android.support.v4.view.PagerAdapter
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToRankingBrand
+import cn.iimedia.jb.http.bean.BannerResult
+import com.xiong.appbase.extension.loadImageFit
+
+/**
+ * Created by iiMedia on 2018/4/23.
+ * 轮播adapter
+ */
+class BannerAdapter(val context: Context, val list: ArrayList<BannerResult>) : PagerAdapter() {
+
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
+        return view == `object`
+    }
+
+    override fun getCount(): Int = list.size
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val layout = LayoutInflater.from(context).inflate(R.layout.banner_item, container, false) as LinearLayout
+        val img = layout.findViewById<ImageView>(R.id.banner_img)
+        //如果有position0ImgUrl就使用作为轮播图，如果该值为空，就是用imgUrl作为轮播图
+        if (list[position].rankInfo.position0ImgUrl != null
+                && !TextUtils.isEmpty(list[position].rankInfo.position0ImgUrl.toString())) {
+            img.loadImageFit(list[position].rankInfo.position0ImgUrl.toString())
+        } else {
+            img.loadImageFit(list[position].rankInfo.imgUrl)
+        }
+        img.setOnClickListener {
+            intentToRankingBrand(context, (list[position].rankInfo.id).toInt())
+        }
+        container.addView(layout)
+        return layout
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(`object` as LinearLayout)
+    }
+}

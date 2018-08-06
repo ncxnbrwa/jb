@@ -1,0 +1,21 @@
+package com.myxianwen.share.entity
+
+import com.myxianwen.social_sdk.R
+
+/**
+ * Created by iiMedia on 2017/8/19.
+ * 分享填充adapter的数据
+ */
+data class ShareItem(val type: Int, val name: String, val iconId: Int, val bgId: Int)
+
+val SHARE_ITEM_LIST = arrayListOf<ShareItem>(
+        ShareItem(0, "微信好友", R.mipmap.share_wechat, R.drawable.share_bg_0),
+        ShareItem(1, "微信朋友圈", R.mipmap.share_pyq, R.drawable.share_bg_1),
+        ShareItem(2, "新浪微博", R.mipmap.share_sinablog, R.drawable.share_bg_4),
+        ShareItem(3, "QQ好友", R.mipmap.share_qq, R.drawable.share_bg_2),
+        ShareItem(4, "QQ空间", R.mipmap.share_qqkj, R.drawable.share_bg_3),
+//        ShareItem(5, "腾讯微博", R.mipmap.share_tencentblog, R.drawable.share_bg_5),
+        ShareItem(6, "打开邮箱", R.mipmap.share_email, R.drawable.share_bg_6),
+        ShareItem(7, "复制链接", R.mipmap.share_copylink, R.drawable.share_bg_7)
+)
+

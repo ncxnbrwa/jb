@@ -1,0 +1,74 @@
+package cn.iimedia.jb.homepage.adapter
+
+import android.content.Context
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.ViewType
+import cn.iimedia.jb.http.bean.SearchDatabase
+import kotlinx.android.synthetic.main.search_history_head.view.*
+import kotlinx.android.synthetic.main.search_history_item.view.*
+
+/**
+ * Created by iiMedia on 2018/5/18.
+ * 搜索历史Adapter
+ */
+class SearchPreviewAdapter(val context: Context, val dataList: ArrayList<SearchDatabase>
+                           , val clickListener: (SearchDatabase, Int, View) -> Unit
+                           , val clearAllListener: () -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            ViewType.TYPE_SEARCH_HEADER -> HistoryHeadHolder(LayoutInflater.from(context)
+                    .inflate(R.layout.search_history_head, parent, false), dataList
+                    , clearAllListener)
+            else -> HistoryHolder(LayoutInflater.from(context)
+                    .inflate(R.layout.search_history_item, parent, false), clickListener)
+        }
+
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is HistoryHolder && position > 0) {
+            holder.bind(dataList[position - 1])
+        }
+        if (holder is HistoryHeadHolder && position == 0) {
+            holder.setClear()
+        }
+    }
+
+    override fun getItemCount(): Int = dataList.size + 1
+
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> ViewType.TYPE_SEARCH_HEADER
+            else -> ViewType.TYPE_SEARCH_ITEM
+        }
+    }
+
+    class HistoryHolder(view: View, val clickListener: (SearchDatabase, Int, View) -> Unit)
+        : RecyclerView.ViewHolder(view) {
+        fun bind(data: SearchDatabase) {
+            itemView.name.text = data.searchName
+            itemView.delete.setOnClickListener {
+                clickListener(data, adapterPosition, itemView.delete)
+            }
+            itemView.setOnClickListener{ clickListener(data, adapterPosition, itemView)}
+        }
+    }
+
+    class HistoryHeadHolder(view: View, val dataList: ArrayList<SearchDatabase>
+                            , val clearALlListener: () -> Unit) : RecyclerView.ViewHolder(view) {
+        fun setClear() {
+            if (dataList.isEmpty()) {
+                itemView.clear_history?.visibility = View.GONE
+            } else {
+                itemView.clear_history?.visibility = View.VISIBLE
+            }
+            itemView.clear_history?.setOnClickListener { clearALlListener() }
+        }
+    }
+}

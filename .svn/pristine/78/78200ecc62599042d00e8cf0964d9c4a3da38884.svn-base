@@ -1,0 +1,127 @@
+package cn.iimedia.jb.mine.fragment
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.CollectBrandBean
+import cn.iimedia.jb.http.bean.RankingBrandsList
+import cn.iimedia.jb.mine.adapter.CollectBrandAdapter
+import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.fragment_brand.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 收藏品牌
+ */
+class FragmentCollectBrand : BaseFragment(), OnRefreshListener, OnLoadMoreListener {
+    val TAG = "FragmentCollectBrand"
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+    var page = 1
+    var collectList: ArrayList<RankingBrandsList> = ArrayList()
+    var adapter: CollectBrandAdapter? = null
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_brand
+    }
+
+    companion object {
+        fun getInstance(): FragmentCollectBrand {
+            val f = FragmentCollectBrand()
+            return f
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        refresh_layout?.setOnRefreshListener(this)
+        refresh_layout?.setOnLoadMoreListener(this)
+        brand_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        brand_list.addDivider(mActivity, R.drawable.vertical_gray_divider_8dp)
+        getData()
+    }
+
+    override fun onRefresh(refreshLayout: RefreshLayout?) {
+        page = 1
+        collectList.clear()
+        refresh_layout?.setNoMoreData(false)
+        getData()
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout?) {
+        page++
+        getData()
+    }
+
+    private fun getData() {
+        val call = api.getCollectBrandData(0, els.getStringData(ELS.USER_ID)
+                , 1, 10, els.getStringData(ELS.IMEI))
+        call.enqueue(object : Callback<CollectBrandBean> {
+            override fun onFailure(call: Call<CollectBrandBean>?, t: Throwable?) {
+                if (refresh_layout != null && refresh_layout.isRefreshing) {
+                    refresh_layout?.finishRefresh()
+                }
+                if (refresh_layout.isLoading) {
+                    refresh_layout?.finishLoadMore()
+                }
+                ll_null?.visibility = View.VISIBLE
+                refresh_layout?.visibility = View.GONE
+                DLog.w(HTTP_LOG_TAG, "榜单收藏获取失败")
+            }
+
+            override fun onResponse(call: Call<CollectBrandBean>?, response: Response<CollectBrandBean>?) {
+                if (refresh_layout != null && refresh_layout.isRefreshing) {
+                    refresh_layout?.finishRefresh()
+                }
+                if (refresh_layout.isLoading) {
+                    refresh_layout?.finishLoadMore()
+                }
+                val bean = response?.body()
+                if (bean?.code.equals("1")) {
+                    val list = bean?.result
+                    if (list != null && list.isNotEmpty()) {
+                        ll_null?.visibility = View.GONE
+                        refresh_layout?.visibility = View.VISIBLE
+                        if (list.size < 10) {
+                            refresh_layout?.setNoMoreData(true)
+                        } else {
+                            refresh_layout?.setNoMoreData(false)
+                        }
+                        if (page == 1) {
+                            //在第一个位置额外添加一个元素,空白占位
+                            collectList.add(list[0])
+                        }
+                        collectList.addAll(list)
+                        initAdapter()
+                    } else {
+                        ll_null?.visibility = View.VISIBLE
+                        refresh_layout?.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+
+    private fun initAdapter() {
+        if (adapter == null) {
+            adapter = CollectBrandAdapter(mActivity, collectList)
+            DLog.w(TAG, "收藏列表:$collectList")
+            brand_list?.adapter = adapter
+        } else {
+            adapter?.notifyDataSetChanged()
+        }
+    }
+}

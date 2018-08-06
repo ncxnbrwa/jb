@@ -1,0 +1,74 @@
+package cn.iimedia.jb.homepage.adapter
+
+import android.content.Context
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToRankingBrand
+import cn.iimedia.jb.http.bean.RankingListData
+import com.xiong.appbase.extension.loadImageFit
+import com.xiong.appbase.utils.TimeTypeUtils
+import kotlinx.android.synthetic.main.latest_list_item.view.*
+
+/**
+ * Created by iiMedia on 2018/4/24.
+ * 最新榜单Adapter
+ */
+class LatestListAdapter(val ctx: Context, val dataList: ArrayList<RankingListData>)
+    : RecyclerView.Adapter<LatestListAdapter.BaseViewHolder>() {
+    val TOPIC_ITEM = 0
+    val RANKING_ITEM = 1
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+//        return when (viewType) {
+//            TOPIC_ITEM -> {
+//                TopicViewHolder(ctx, LayoutInflater.from(ctx)
+//                        .inflate(R.layout.topic_item, parent, false))
+//            }
+//            else -> {
+//                RankingViewHolder(ctx, LayoutInflater.from(ctx)
+//                        .inflate(R.layout.latest_list_item, parent, false))
+//            }
+//        }
+        return RankingViewHolder(ctx, LayoutInflater.from(ctx)
+                .inflate(R.layout.latest_list_item, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        holder.bind(dataList[position])
+    }
+
+    override fun getItemCount(): Int = dataList.size
+
+//    override fun getItemViewType(position: Int): Int {
+//        return super.getItemViewType(position)
+//    }
+
+    open class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        open fun bind(data: RankingListData) {}
+    }
+
+    class RankingViewHolder(val ctx: Context, view: View) : BaseViewHolder(view) {
+        override fun bind(data: RankingListData) {
+            itemView.img.loadImageFit(data.imgUrl)
+            itemView.name.text = data.name.trim()
+            itemView.time.text = TimeTypeUtils.timestamp2yyyyMMdd(data.updateTime.toLong())
+
+            itemView.setOnClickListener {
+                intentToRankingBrand(ctx, data.id.toInt())
+//                intentToTopicDetail(ctx)
+            }
+        }
+    }
+
+    class TopicViewHolder(val ctx: Context, view: View) : BaseViewHolder(view) {
+        override fun bind(data: RankingListData) {
+//            itemView.topic_name.text = ""
+//            itemView.topic_content.text = ""
+//            itemView.setOnClickListener { intentToTopicDetail(ctx) }
+        }
+    }
+
+}

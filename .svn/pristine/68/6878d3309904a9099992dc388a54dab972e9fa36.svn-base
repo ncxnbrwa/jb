@@ -1,0 +1,46 @@
+package cn.iimedia.jb.common
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import cn.iimedia.jb.mine.activity.SettingActivity
+import cn.iimedia.jb.mine.activity.UserInfoActivity
+import cn.iimedia.jb.rankingBrand.BrandDetailActivity
+import cn.iimedia.jb.rankingBrand.MoreHottestRankingActivity
+import cn.iimedia.jb.rankingBrand.RankingBrandActivity
+
+/**
+ * Created by iiMedia on 2018/4/28.
+ * 页面跳转辅助类
+ */
+fun intentToBrandDetail(context: Context, id: Int) {
+    val intent = Intent(context, BrandDetailActivity::class.java)
+    val bundle = Bundle()
+    bundle.putInt(BRAND_ID, id)
+    intent.putExtras(bundle)
+    context.startActivity(intent)
+}
+
+fun intentToRankingBrand(context: Context, id: Int) {
+    val intent = Intent(context, RankingBrandActivity::class.java)
+    val bundle = Bundle()
+    bundle.putInt(RANK_INFO_ID, id)
+    intent.putExtras(bundle)
+    context.startActivity(intent)
+}
+
+fun intentToSetting(context: Context) {
+    val intent = Intent(context, SettingActivity::class.java)
+    context.startActivity(intent)
+}
+
+fun intentToUserInfo(context: Context) {
+    val intent = Intent(context, UserInfoActivity::class.java)
+    context.startActivity(intent)
+}
+
+fun intentHottestMore(context: Context) {
+    val intent = Intent(context, MoreHottestRankingActivity::class.java)
+    context.startActivity(intent)
+}
+

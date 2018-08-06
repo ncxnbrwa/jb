@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/hot_label_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <include layout="@layout/divider_8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:text="热搜标签"
+        android:textColor="@color/text_color5"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <com.qmuiteam.qmui.widget.QMUIFloatLayout
+        android:id="@+id/float_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        app:qmui_childHorizontalSpacing="16dp"
+        app:qmui_childVerticalSpacing="8dp" />
+</LinearLayout>

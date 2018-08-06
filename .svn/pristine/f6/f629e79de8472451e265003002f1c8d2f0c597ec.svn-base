@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingTop="20dp">
+
+    <RelativeLayout
+        android:id="@+id/rl1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="4dp"
+            android:textColor="#C69F73"
+            android:textSize="30sp"
+            tools:text="75.45" />
+
+        <ImageView
+            android:id="@+id/iv_up"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignBottom="@+id/tv_value"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@+id/tv_value"
+            android:src="@mipmap/icon_fen" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_slash"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@+id/rl1"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:src="@drawable/slash" />
+
+    <RelativeLayout
+        android:id="@+id/rl2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_slash"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            android:layout_alignBottom="@+id/tv_brand_name"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/rankingbg" />
+
+        <TextView
+            android:id="@+id/tv_brand_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/text_color1"
+            android:textSize="16sp"
+            tools:text="安满 ANMUM" />
+
+        <ImageView
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/tv_brand_name"
+            android:src="@mipmap/icon_detail" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl2"
+        android:layout_marginTop="20dp"
+        android:lineSpacingExtra="12dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="#666666"
+        android:textSize="13sp"
+        tools:text="安满的隶属公司新西兰恒天然集团拥有85年持续的乳品研究历史，是全球最大的乳制品加工企业和出口企业，全球十大乳品商之一。恒天然采用合作社模式——由约10,500名新西兰奶农共同拥有，每年这10,500位奶农股东向恒天然提供145亿升优质牛奶。" />
+
+    <TextView
+        android:id="@+id/tv_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_desc"
+        android:layout_marginBottom="-18dp"
+        android:layout_marginRight="-8dp"
+        android:layout_marginTop="-28dp"
+        android:textColor="#33000000"
+        android:textSize="56sp"
+        tools:text="1" />
+</RelativeLayout>

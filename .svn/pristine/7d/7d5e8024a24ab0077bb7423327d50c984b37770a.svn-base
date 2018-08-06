@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".rankingBrand.RankingBrandActivity">
+
+    <include layout="@layout/ranking_brand_top_bar" />
+
+    <cn.iimedia.jb.rankingBrand.scrollPage.PageContainer
+        android:id="@+id/page_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <cn.iimedia.jb.rankingBrand.scrollPage.Page
+            android:id="@+id/pageOne"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#33ffffff"
+            android:scrollbars="vertical">
+
+            <include layout="@layout/ranking_layout" />
+        </cn.iimedia.jb.rankingBrand.scrollPage.Page>
+
+        <cn.iimedia.jb.rankingBrand.scrollPage.Page
+            android:id="@+id/pageTwo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/pageBehavior">
+
+            <include layout="@layout/brand_layout" />
+        </cn.iimedia.jb.rankingBrand.scrollPage.Page>
+    </cn.iimedia.jb.rankingBrand.scrollPage.PageContainer>
+</LinearLayout>

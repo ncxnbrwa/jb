@@ -1,0 +1,139 @@
+package cn.iimedia.jb.classify
+
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.common.TWO_LEVEL_ID
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.ClassifyLevelBean
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.fragment_classify.*
+import kotlinx.android.synthetic.main.load_failure.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/8.
+ * 分类页面
+ */
+class FragmentClassify : BaseFragment(), View.OnClickListener {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+    //存储左侧边栏View
+    val oneLevelTextList: ArrayList<TextView> = ArrayList()
+    //记录一级菜单已选位置
+    var lastCheck = 0
+    var fragmentTwoLevel: FragmentTwoLevel? = null
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_classify
+    }
+
+    companion object {
+        fun getInstance(): FragmentClassify {
+            val fragemnt = FragmentClassify()
+            return fragemnt
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        btn_refresh?.setOnClickListener(this)
+        fragmentTwoLevel = FragmentTwoLevel()
+        baseActivity.supportFragmentManager.beginTransaction()
+                .replace(R.id.two_level_content, fragmentTwoLevel).commit()
+        getOneLevelData()
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_refresh -> getOneLevelData()
+        }
+    }
+
+    private fun getOneLevelData() {
+        val oneLevelCall = api.getOneLevel(els.getStringData(ELS.IMEI))
+        oneLevelCall.enqueue(object : Callback<ClassifyLevelBean> {
+            override fun onFailure(call: Call<ClassifyLevelBean>?, t: Throwable?) {
+                DLog.w(HTTP_LOG_TAG, "一级分类数据请求失败")
+                load_failure_layout?.visibility = View.VISIBLE
+                data_layout?.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<ClassifyLevelBean>?, response: Response<ClassifyLevelBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    load_failure_layout?.visibility = View.GONE
+                    data_layout?.visibility = View.VISIBLE
+                    val dataList = bean.resuleList
+                    for (data in dataList) {
+                        val textView = createText(data.get(1).toString())
+                        oneLevelTextList.add(textView)
+                        ll_one_level.addView(textView)
+                    }
+                    oneLevelTextList.get(0).setTextCheck()
+                    notifyLevelTwo((dataList[0][0] as Number).toInt())
+                    //设置左侧边栏点击事件
+                    for (i in oneLevelTextList.indices) {
+                        oneLevelTextList[i].setOnClickListener { _: View? ->
+                            //点击不同的item才切换加载
+                            if (i != lastCheck) {
+                                oneLevelTextList[i].setTextCheck()
+                                oneLevelTextList[lastCheck].setTextCheck(false)
+                                lastCheck = i
+                                val index = (dataList[i][0] as Number).toInt()
+                                notifyLevelTwo(index)
+                            }
+                        }
+                    }
+                } else {
+                    load_failure_layout?.visibility = View.VISIBLE
+                    data_layout?.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+    //代码新建左侧边栏TextView
+    private fun createText(text: String): TextView {
+        val textView = TextView(mActivity)
+        textView.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 72)
+        textView.text = text
+        textView.setBackgroundResource(R.drawable.classify_left_bg_normal)
+        textView.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color5))
+        textView.textSize = 13f
+        textView.setPadding(16, 10, 0, 0)
+//        textView.gravity = Gravity.CENTER
+        return textView
+    }
+
+    //手动更改左侧边栏文字check状态
+    fun TextView.setTextCheck(check: Boolean = true) {
+        if (check) {
+            setBackgroundResource(R.drawable.classify_left_bg_sel)
+            setPadding(16, 10, 0, 0)
+            setTextColor(ContextCompat.getColor(mActivity, R.color.text_color2))
+        } else {
+            setTextColor(ContextCompat.getColor(mActivity, R.color.text_color5))
+            setBackgroundResource(R.drawable.classify_left_bg_normal)
+            setPadding(16, 10, 0, 0)
+        }
+    }
+
+    //调用右侧fragment的网络请求二级分类
+    fun notifyLevelTwo(twoLevelId: Int) {
+        val bundle = Bundle()
+        bundle.putInt(TWO_LEVEL_ID, twoLevelId)
+        fragmentTwoLevel?.arguments = bundle
+        fragmentTwoLevel?.getTwoLevelData()
+    }
+
+}

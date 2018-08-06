@@ -1,0 +1,96 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.intentToAboutUs
+import cn.iimedia.jb.common.intentToModifyPassword
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import com.umeng.socialize.UMAuthListener
+import com.umeng.socialize.UMShareAPI
+import com.umeng.socialize.bean.SHARE_MEDIA
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.utils.DialogUtils
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.activity_setting.*
+
+/**
+ * Created by iiMedia on 2018/5/3.
+ * 设置页面
+ */
+class SettingActivity : BaseActivity(), View.OnClickListener {
+    val els: ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_setting
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        toolbar.setNavigationOnClickListener { finish() }
+        change_password_layout.setOnClickListener(this)
+        about_us_layout.setOnClickListener(this)
+        protocol_layout.setOnClickListener(this)
+        logout.setOnClickListener(this)
+
+        if (els.getBoolData(ELS.USER_ONLAND)||els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+            logout.visibility = View.VISIBLE
+        } else {
+            logout.visibility = View.GONE
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.change_password_layout -> intentToModifyPassword(mActivity)
+            R.id.about_us_layout -> intentToAboutUs(mActivity)
+            R.id.protocol_layout -> {
+            }
+            R.id.logout -> {
+                val logoutDialog = DialogUtils.showPositiveNegativeContent(mActivity, "确定要退出登录吗?")
+                { dialog: MaterialDialog, which: DialogAction ->
+                    when (which) {
+                        DialogAction.POSITIVE -> {
+                            logout()
+                            dialog.dismiss()
+                        }
+                        DialogAction.NEGATIVE -> {
+                            dialog.dismiss()
+                        }
+                        else -> {
+                        }
+                    }
+                }
+                logoutDialog.show()
+            }
+        }
+    }
+
+    private fun logout() {
+        if (els.getBoolData(ELS.USER_ONLAND)) {
+            els.clearUserInfo()
+        }
+        if (els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+            //platformType: 1：微信；2：QQ；3：微博
+            val platformType = els.getIntData(ELS.THIRD_PARTY_PLATFORM)
+            val platform: SHARE_MEDIA
+            if (platformType == 1) {
+                platform = SHARE_MEDIA.WEIXIN
+            } else if (platformType == 2) {
+                platform = SHARE_MEDIA.QQ
+            } else {
+                platform = SHARE_MEDIA.SINA
+            }
+            UMShareAPI.get(mActivity).deleteOauth(mActivity,platform,object :UMAuthListener{
+                override fun onComplete(p0: SHARE_MEDIA?, p1: Int, p2: MutableMap<String, String>?) {}
+                override fun onCancel(p0: SHARE_MEDIA?, p1: Int) {}
+                override fun onError(p0: SHARE_MEDIA?, p1: Int, p2: Throwable?) {}
+                override fun onStart(p0: SHARE_MEDIA?) {}
+            })
+            els.clearUserInfo()
+        }
+        finish()
+    }
+}

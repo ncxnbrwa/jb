@@ -1,0 +1,32 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import cn.iimedia.jb.R
+import cn.iimedia.jb.mine.adapter.CollectPageAdapter
+import cn.iimedia.jb.mine.fragment.FragmentBrand
+import cn.iimedia.jb.mine.fragment.FragmentRanking
+import com.xiong.appbase.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_collect.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 我的收藏页面
+ */
+class CollectActivity : BaseActivity() {
+    val mFragments = ArrayList<Fragment>()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_collect
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        mFragments.add(FragmentRanking.getInstance())
+        mFragments.add(FragmentBrand.getInstance())
+
+        vp.adapter = CollectPageAdapter(supportFragmentManager, mFragments)
+        tabs.setupWithViewPager(vp)
+    }
+}

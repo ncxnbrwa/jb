@@ -1,0 +1,19 @@
+package cn.iimedia.jb.common;
+
+import com.zhouwei.mzbanner.MZBannerView;
+import com.zhouwei.mzbanner.holder.MZHolderCreator;
+
+import java.util.ArrayList;
+
+import cn.iimedia.jb.http.bean.BannerResult;
+
+/**
+ * Created by iiMedia on 2018/7/17.
+ */
+
+public class CommonUtils {
+    public static void setBanner(MZBannerView bannerView, ArrayList<BannerResult> datas
+            , MZHolderCreator mzHolderCreator) {
+        bannerView.setPages(datas,mzHolderCreator);
+    }
+}

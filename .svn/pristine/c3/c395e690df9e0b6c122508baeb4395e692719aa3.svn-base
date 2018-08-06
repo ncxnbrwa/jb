@@ -1,0 +1,36 @@
+package cn.iimedia.jb.http.bean
+
+/**
+ * Created by iiMedia on 2018/5/9.
+ * 和用户数据相关的实体类
+ */
+//联系我们
+data class ContactUsBean(
+        val code: Number,
+        val data: Any?,
+        val msg: String
+)
+
+//我的收藏
+data class CollectBean(
+        val code: String,
+        val msg: String,
+        val result: ArrayList<CollectResult>
+)
+
+data class CollectResult(
+        val id: Number,
+        val name: String,
+        val description: String,
+        val type: Number,
+        val bgTid: Number,
+        val bgtVal: Any?,
+        val rankCategoryId: Number,
+        val status: Number,
+        val createTime: Number,
+        val updateTime: Number,
+        val authorId: Number,
+        val imgUrl: String,
+        val position0ImgUrl: Any?,
+        val position1ImgUrl: Any?
+)

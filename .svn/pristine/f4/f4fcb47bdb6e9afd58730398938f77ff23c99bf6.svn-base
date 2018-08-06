@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--榜单品牌页颜色-->
+    <color name="text_color1">#333333</color>
+    <color name="text_color2">#C69F73</color>
+    <color name="text_color3">#999999</color>
+    <color name="text_color4">#BBBBBB</color>
+    <color name="text_color5">#666666</color>
+    <color name="btn_bg_color">#dd000000</color>
+
+    <color name="bg_color">#F5F5F5</color>
+    <color name="bg_color2">#F0F0F0</color>
+    <color name="bg_color3">#999999</color>
+    <color name="bg_color4">#C69F73</color>
+</resources>

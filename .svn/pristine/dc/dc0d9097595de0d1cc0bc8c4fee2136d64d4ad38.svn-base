@@ -1,0 +1,69 @@
+package cn.iimedia.jb.mine.fragment
+
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.HTTP_LOG_TAG
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.CollectBean
+import cn.iimedia.jb.mine.adapter.CollectBrandAdapter
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.fragment_brand.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 收藏品牌
+ */
+class FragmentCollectBrand : BaseFragment() {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_brand
+    }
+
+    companion object {
+        fun getInstance(): FragmentCollectBrand {
+            val f = FragmentCollectBrand()
+            return f
+        }
+    }
+
+    override fun lazyLoad() {
+//        getData()
+    }
+
+    private fun getData() {
+        val call = api.getCollectData(0, els.getStringData(ELS.USER_ID)
+                , 1, 10, els.getStringData(ELS.IMEI))
+        call.enqueue(object : Callback<CollectBean> {
+            override fun onFailure(call: Call<CollectBean>?, t: Throwable?) {
+                ll_null.visibility = View.VISIBLE
+                brand_list.visibility = View.GONE
+                DLog.w(HTTP_LOG_TAG, "榜单收藏获取失败")
+            }
+
+            override fun onResponse(call: Call<CollectBean>?, response: Response<CollectBean>?) {
+                val bean = response?.body()
+                if (bean?.code.equals("1")) {
+                    val list = bean?.result
+                    if (list!!.isNotEmpty()) {
+                        brand_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+                        brand_list.addDivider(mActivity, R.drawable.vertical_gray_divider_8dp)
+                        brand_list.adapter = CollectBrandAdapter(mActivity, list)
+                    } else {
+                        ll_null.visibility = View.VISIBLE
+                        brand_list.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+}

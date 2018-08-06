@@ -1,0 +1,72 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.RESET_PSW_CODE
+import cn.iimedia.jb.common.RESET_PSW_PHONE
+import cn.iimedia.jb.http.APIConstants
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.activity_reset_password.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 找回密码下一步
+ */
+class ResetPasswordActivity : BaseActivity(), View.OnClickListener {
+    val api:APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els:ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_reset_password
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        btn_last.setOnClickListener(this)
+        btn_ok.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_last -> finish()
+            R.id.btn_ok -> commit()
+        }
+    }
+
+    private fun commit() {
+        val newPsw = et_new_psw.text.toString()
+        val confirmPsw = et_confirm_psw.text.toString()
+        val phone = mApp.receiveInternalActivityParam(RESET_PSW_PHONE)
+        val code=  mApp.receiveInternalActivityParam(RESET_PSW_CODE)
+
+        if (TextUtils.isEmpty(newPsw)) {
+            showToast(resources.getString(R.string.new_password_empty))
+            return
+        }
+        if (newPsw.length < 6 || newPsw.length > 12) {
+            showToast(resources.getString(R.string.password_not_match))
+            return
+        }
+        if (TextUtils.isEmpty(confirmPsw)) {
+            showToast(resources.getString(R.string.confirm_password_empty))
+            return
+        }
+        if (!newPsw.equals(confirmPsw)) {
+            showToast(resources.getString(R.string.password_not_same))
+            return
+        }
+        //上一步得到的电话和验证码
+        if (TextUtils.isEmpty(phone.toString()) || TextUtils.isEmpty(code.toString())) {
+            return
+        }
+
+        showToast("重置成功")
+        finish()
+        mApp.finishSpecialActivity(ForgetPasswordActivity::class.java)
+    }
+}

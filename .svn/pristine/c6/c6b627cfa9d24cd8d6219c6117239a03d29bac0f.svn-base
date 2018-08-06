@@ -1,0 +1,71 @@
+package cn.iimedia.jb.http.bean
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 主页相关实体类
+ */
+//轮播类
+data class BannerBean(val code: String, val result: ArrayList<BannerResult>)
+
+data class BannerResult(
+        val posi: Number,
+        val rankInfo: RankInfo,
+        val skipway: Number,
+        val type: Number,
+        val vId: Number
+)
+
+data class RankInfo(
+        val authorId: Any?,
+        val bGTid: Any?,
+        val bGTVal: Any?,
+        val createTime: Any?,
+        val description: Any?,
+        val id: Number,
+        val imgUrl: String,
+        val name: String,
+        val position0ImgUrl: Any?,
+        val position1ImgUrl: Any?,
+        val rankCategoryId: Number,
+        val status: Any?,
+        val type: Any?,
+        val updateTime: Number
+)
+
+//最新/最热榜单类
+data class RankingListBean(
+        val code: Number,
+        val data: ArrayList<RankingListData>,
+        val msg: String
+)
+
+data class RankingListData(
+        val authorId: Number,
+        val bGTid: Number,
+        val bGTVal: String,
+        val createTime: Number,
+        val description: String,
+        val id: Number,
+        val imgUrl: String,
+        val name: String,
+        val rankCategoryId: Number,
+        val status: Number,
+        val type: Number,
+        val updateTime: Number
+)
+
+//小众精选/热门品牌
+data class BrandListBean(
+        val code: Number,
+        val data: ArrayList<BrandListData>,
+        val msg: String
+)
+
+data class BrandListData(
+        val brandname: String,
+        val colorLogo: String,
+        val grepLogo: String,
+        val id: Number,
+        val rankInfoId: Number
+)
+

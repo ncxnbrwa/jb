@@ -1,0 +1,113 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.RESET_PSW_CODE
+import cn.iimedia.jb.common.RESET_PSW_PHONE
+import cn.iimedia.jb.common.intentToResetPassword
+import cn.iimedia.jb.http.RetrofitHelper
+import cn.iimedia.jb.mine.fragment.ImgCodeDialog
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.CustomTextWatcher
+import com.xiong.appbase.extension.setVerify
+import com.xiong.appbase.utils.RegExConstants
+import kotlinx.android.synthetic.main.activity_forget_password.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 忘记密码
+ */
+class ForgetPasswordActivity : BaseActivity(), View.OnClickListener {
+    var nextFlag = false
+    private val mActivity = this
+
+    override fun getLayoutId(): Int = R.layout.activity_forget_password
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        btn_verification.setOnClickListener(this)
+        btn_next.setOnClickListener(this)
+        //初始化倒计时按钮
+        btn_verification.onCreate()
+        btn_verification.setPhoneMatch(false)
+        btn_verification.setVerify(false)
+        et_phone.addTextChangedListener(object : CustomTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.length == 0) {
+                    btn_verification?.setPhoneMatch(false)
+                    btn_verification?.setVerify(false)
+                } else {
+                    if (!btn_verification.isCounting) {
+                        if (Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(s.toString())) {
+                            btn_verification?.setPhoneMatch(true)
+                            btn_verification?.setVerify()
+                        } else {
+                            btn_verification?.setPhoneMatch(false)
+                            btn_verification?.setVerify(false)
+                        }
+                    } else {
+                        if (Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(s.toString())) {
+                            btn_verification?.setPhoneMatch(true)
+                        } else {
+                            btn_verification?.setPhoneMatch(false)
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_verification -> {
+                val phone = et_phone.text.toString()
+                val dialog = ImgCodeDialog(phone) { code: String ->
+                    RetrofitHelper(mActivity).verificationCode(phone, code, btn_verification)
+                    { success: Boolean ->
+                        nextFlag = success
+                    }
+                }
+                dialog.show(supportFragmentManager, "imgDialog")
+            }
+            R.id.btn_next -> {
+//                if (nextFlag)
+                    next()
+            }
+        }
+    }
+
+    private fun next() {
+        val phone = et_phone.text.toString()
+        val code = et_verification.text.toString()
+        phone_error.visibility = View.GONE
+        code_error.visibility = View.GONE
+        if (TextUtils.isEmpty(phone)) {
+            phone_error.visibility = View.VISIBLE
+            phone_error.text = resources.getString(R.string.phone_empty)
+            return
+        }
+        if (!Regex(RegExConstants.REGEX_MOBILE_EXACT).matches(phone)) {
+            phone_error.visibility = View.VISIBLE
+            phone_error.text = resources.getString(R.string.phone_not_match)
+            return
+        }
+        if (TextUtils.isEmpty(code)) {
+            code_error.visibility = View.VISIBLE
+            code_error.text = resources.getString(R.string.code_empty)
+            return
+        }
+
+        val bundle = Bundle()
+        bundle.putString(RESET_PSW_PHONE, phone)
+        bundle.putString(RESET_PSW_CODE, code)
+        intentToResetPassword(mActivity, bundle)
+    }
+
+    override fun onDestroy() {
+        btn_verification.onDestroy()
+        super.onDestroy()
+    }
+}

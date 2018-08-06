@@ -1,0 +1,19 @@
+package cn.iimedia.jb.homepage.holder
+
+import android.content.Context
+import android.view.View
+import cn.iimedia.jb.common.intentHottestMore
+import cn.iimedia.jb.homepage.adapter.HottestListAdapter
+import cn.iimedia.jb.http.bean.RankingListData
+
+/**
+ * Created by iiMedia on 2018/5/2.
+ * 最热榜单最后一项
+ */
+class HolderHottestLastItem(val context: Context, view: View) : HottestListAdapter.HottestListHolder(view) {
+    override fun bind(listData: RankingListData) {
+        itemView.setOnClickListener {
+            intentHottestMore(context)
+        }
+    }
+}

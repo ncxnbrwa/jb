@@ -1,0 +1,115 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    def ext = rootProject.extensions.getByName("ext")
+    compileSdkVersion ext.target_version
+    buildToolsVersion ext.build_version
+
+    defaultConfig {
+        applicationId "cn.iimedia.jb"
+        minSdkVersion ext.min_version
+        targetSdkVersion ext.target_version
+        versionCode ext.code_version
+        versionName ext.code_version_name
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // 以Proguard的方式手动加入要放到Main.dex中的类
+        multiDexKeepProguard file("keep_in_main_dex.txt")
+        multiDexEnabled true
+
+        manifestPlaceholders = [
+                PACKAGE_NAME    : applicationId,
+        ]
+    }
+    signingConfigs {
+        iimedianews {
+            keyAlias 'iimedianews'
+            keyPassword 'iimedia'
+            storeFile file('iimedianews.jks')
+            storePassword 'iimedia'
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField "boolean", "mbDebugMode", "true"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.iimedianews
+            buildConfigField "boolean", "mbDebugMode", "false"
+        }
+    }
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
+    dexOptions {
+        jumboMode true
+    }
+    //用于统一维度,避免AS3.0的编译错误
+    flavorDimensions "tier"
+    productFlavors {
+        iimedia {
+            dimension "tier"
+            matchingFallbacks = ['iimedia']
+//            applicationId "cn.iimedia.yq"
+        }
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${applicationId}_${buildType.name}_${releaseTime()}_v${code_version_name}.apk"
+        }
+    }
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/layouts/home',
+                            'src/main/res/layouts/common',
+                            'src/main/res/layouts/ranking_brand',
+                            'src/main/res/layouts/mine',
+                            'src/main/res/layouts/classify',
+                            'src/main/res/layouts/information',
+                            'src/main/res/layouts',
+                            'src/main/res'
+                    ]
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+//    configurations.all {
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            def requested = details.requested
+//            if (requested.group == 'com.android.support') {
+//                if (!requested.name.startsWith("multidex")) {
+//                    details.useVersion '25.3.0'
+//                }
+//            }
+//        }
+//    }
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation project(':appbase')
+    implementation('com.alibaba.android:ultraviewpager:1.0.7.7@aar') {
+        transitive = true
+    }
+    implementation project(':mediasel')
+}

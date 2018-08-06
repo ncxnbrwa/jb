@@ -1,0 +1,39 @@
+{
+    "logs": [
+        {
+            "outputFile": "E:\\xw\\others\\jb\\appbase\\build\\intermediates\\incremental\\mergeIimediaDebugAndroidTestResources\\merged.dir\\values-v14\\values-v14.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\iiMedia\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-26.1.0.aar\\4a00a402da8a17c12daa29270e062071\\res\\values-v14\\values-v14.xml",
+                    "from": {
+                        "startLines": "2,7,8,9,15",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,331,402,485,895",
+                        "endLines": "6,7,8,14,20",
+                        "endColumns": "12,70,82,12,12",
+                        "endOffsets": "326,397,480,890,1312"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\iiMedia\\.gradle\\caches\\transforms-1\\files-1.1\\core-0.8.5.3.aar\\a140925a0994dba7e1022749d9480f61\\res\\values-v14\\values-v14.xml",
+                    "from": {
+                        "startLines": "2,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,428",
+                        "endLines": "8,17",
+                        "endColumns": "12,12",
+                        "endOffsets": "423,855"
+                    },
+                    "to": {
+                        "startLines": "21,28",
+                        "startColumns": "4,4",
+                        "startOffsets": "1317,1690",
+                        "endLines": "27,36",
+                        "endColumns": "12,12",
+                        "endOffsets": "1685,2117"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+package cn.iimedia.jb.information
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.INFO_ID
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.social.SocialShareActivity
+import kotlinx.android.synthetic.main.activity_info_detail.*
+
+/**
+ * Created by iiMedia on 2018/6/8.
+ * 资讯详情页面
+ */
+class InformationDetailActivity : BaseActivity(), View.OnClickListener {
+    val mActivity = this
+    var infoId = 0
+
+    override fun getLayoutId(): Int = R.layout.activity_info_detail
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        infoId = intent.extras.getInt(INFO_ID)
+        toolbar.setNavigationOnClickListener { finish() }
+        share?.setOnClickListener(this)
+        web.loadUrl("http://www.iimedia.cn/mobile${infoId}.html")
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.share -> SocialShareActivity.intentTo(mActivity)
+        }
+    }
+}

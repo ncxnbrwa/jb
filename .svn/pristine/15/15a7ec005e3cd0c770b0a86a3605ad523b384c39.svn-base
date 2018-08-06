@@ -1,0 +1,148 @@
+package cn.iimedia.jb.mine.fragment
+
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.os.Bundle
+import android.os.Handler
+import android.support.v4.app.DialogFragment
+import android.view.View
+import android.view.Window
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.Config
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.CommonResultBean
+import com.xiong.appbase.custom.CustomTextWatcher
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.KeyboardUtils
+import com.xiong.appbase.utils.MyUtils
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+@SuppressLint("ValidFragment")
+/**
+ * Created by iiMedia on 2018/5/15.
+ * 图形验证码弹窗
+ */
+class ImgCodeDialog constructor(val phone: String, val finishListener: (String) -> Unit) : DialogFragment() {
+    val api: APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els: ELS = ELS.getInstance()
+    var img: ImageView? = null
+    var refresh: TextView? = null
+    var et: EditText? = null
+    var tvError: TextView? = null
+    var tvCorrect: TextView? = null
+    var tvLoading: TextView? = null
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = Dialog(activity as Context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val view = View.inflate(activity, R.layout.fragment_img_code, null)
+        img = view.findViewById(R.id.img_code)
+        refresh = view.findViewById(R.id.refresh_img)
+        et = view.findViewById(R.id.et_img_code)
+        tvError = view.findViewById(R.id.error)
+        tvCorrect = view.findViewById(R.id.correct)
+        tvLoading = view.findViewById(R.id.loading_text)
+        dialog.setContentView(view)
+        //设置宽高占屏幕比例
+        val window = dialog.window
+        val lp = window.attributes
+        lp.width = (MyUtils.getScreenWidth() * 0.8).toInt()
+        lp.height = (MyUtils.getScreenHeight() * 0.4).toInt()
+        window.attributes = lp
+
+        KeyboardUtils.showSoftInput(activity)
+        refresh?.setOnClickListener { getImgCode() }
+        et?.addTextChangedListener(object : CustomTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.length == 5) {
+                    checkCode(s.toString())
+                }
+            }
+        })
+        getImgCode()
+        return dialog
+    }
+
+    private fun getImgCode() {
+        //加载图形码
+        val imgCodeCall = api.getImgCode(phone, els.getStringData(ELS.IMEI))
+        imgCodeCall.enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                MyUtils.showToast("图形验证码获取失败")
+            }
+
+            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                //得到的是图片直接用字节流读取进来
+                val body = response?.body()?.byteStream()
+                img?.setImageBitmap(BitmapFactory.decodeStream(body))
+            }
+        })
+    }
+
+    private fun checkCode(phoneCode: String) {
+        tvError?.visibility = View.GONE
+        tvCorrect?.visibility = View.GONE
+        tvLoading?.visibility = View.VISIBLE
+        val checkCall = api.checkImgCode(phone, phoneCode)
+        checkCall.enqueue(object : Callback<CommonResultBean> {
+            override fun onFailure(call: Call<CommonResultBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, resources.getString(R.string.check_code_fail))
+                tvError?.visibility = View.VISIBLE
+                tvLoading?.visibility = View.GONE
+                tvError?.text = resources.getString(R.string.check_code_fail)
+            }
+
+            override fun onResponse(call: Call<CommonResultBean>?, response: Response<CommonResultBean>?) {
+                val bean = response?.body()
+                tvLoading?.visibility = View.GONE
+                //code:-1:服务器问题；code:3；参数有误；详细见msg；1：参数无误，然后根据result值进行判断：
+                // result:2：图形验证码过期，请刷新图形验证码；0：图形验证码错误；1：图形验证码正确
+                when (bean?.code) {
+                    "-1" -> {
+                        tvError?.visibility = View.VISIBLE
+                        tvError?.text = resources.getString(R.string.server_error)
+                    }
+                    "3" -> {
+                        tvError?.visibility = View.VISIBLE
+                        tvError?.text = "参数有误"
+                    }
+                    "1" -> {
+                        when (bean.result) {
+                            "2" -> {
+                                tvError?.visibility = View.VISIBLE
+                                tvError?.text = "图形验证码过期，请刷新图形验证码"
+                            }
+                            "0" -> {
+                                tvError?.visibility = View.VISIBLE
+                                tvError?.text = "图形验证码错误"
+                            }
+                            "1" -> {
+                                tvCorrect?.visibility = View.VISIBLE
+                                closeDialog()
+                                finishListener(phoneCode)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+
+    private fun closeDialog() {
+        Handler().postDelayed({
+            dismiss()
+            KeyboardUtils.toggleSoftInput()
+        }, 1000)
+    }
+}

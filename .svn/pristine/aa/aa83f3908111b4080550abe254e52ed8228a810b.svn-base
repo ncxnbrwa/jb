@@ -1,0 +1,258 @@
+package cn.iimedia.jb.rankingBrand
+
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v4.widget.NestedScrollView
+import android.support.v7.widget.GridLayoutManager
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.Config
+import cn.iimedia.jb.common.intentToContactUs
+import cn.iimedia.jb.common.intentToLogin
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.*
+import cn.iimedia.jb.rankingBrand.adapter.BrandDgListAdapter
+import cn.iimedia.jb.rankingBrand.adapter.BrandSelectRankingAdapter
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.extension.addGridDivider
+import com.xiong.appbase.extension.loadImageFit
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.social.SocialShareActivity
+import com.xiong.appbase.utils.DLog
+import com.xiong.appbase.utils.ELS
+import com.xiong.appbase.utils.MyUtils
+import kotlinx.android.synthetic.main.activity_brand_detail.*
+import kotlinx.android.synthetic.main.expose_layout.*
+import org.litepal.crud.DataSupport
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 品牌详情页
+ */
+class BrandDetailActivity : BaseActivity(), View.OnClickListener {
+    private val mActivity = this
+    private var api: APIConstants? = null
+    private val els: ELS = ELS.getInstance()
+    private var brandId = 0
+    private var mFavor = false
+    private var imgUrl = ""
+    private var content = ""
+    private var title = ""
+
+    override fun getLayoutId(): Int = R.layout.activity_brand_detail
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        api = RequestEngine.createService(APIConstants::class.java)
+        brandId = intent.extras.getInt(Config.BRAND_ID)
+        top_img_logo.visibility = View.GONE
+        share?.isEnabled = false
+        getDetail()
+        getSelectList()
+        getDg()
+
+        dg_list?.layoutManager = GridLayoutManager(mActivity, 2)
+        dg_list?.isNestedScrollingEnabled = false
+        dg_list?.addGridDivider(mActivity, MyUtils.dp2px(16f))
+        //入选商品目前还么接口,测试数据
+//        goods_list?.layoutManager = GridLayoutManager(mActivity, 2)
+//        goods_list?.isNestedScrollingEnabled = false
+//        goods_list?.addGridDivider(mActivity, MyUtils.dp2px(16f))
+//        goods_list?.adapter = BrandGoodsAdapter(mActivity)
+
+        //根据数据库更新收藏按钮状态
+        val databaseList = DataSupport.where("project_id=?", "$brandId")
+                .find(CollectDatabase::class.java)
+        mFavor = databaseList.isNotEmpty()
+        updateFavorButton()
+
+        toolbar.setNavigationOnClickListener { finish() }
+        share?.setOnClickListener(this)
+        collect?.setOnClickListener(this)
+        expose_layout?.setOnClickListener(this)
+
+        //大LOGO滑出屏幕时显示头部小LOGO
+        scroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener
+        { _, _, scrollY, _, _ ->
+            val imgLogoHalfHeight = img_logo.bottom / 2
+            val imgLogoHeight = img_logo.bottom
+
+            if (scrollY < imgLogoHalfHeight) {
+                top_img_logo.visibility = View.GONE
+            } else if (scrollY in imgLogoHalfHeight..imgLogoHeight) {
+                top_img_logo.visibility = View.VISIBLE
+                top_img_logo.alpha = (scrollY - imgLogoHalfHeight) / (imgLogoHeight - imgLogoHalfHeight).toFloat()
+            }
+        })
+
+        select_list?.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        select_list?.isNestedScrollingEnabled = false
+        select_list?.addDivider(mActivity, R.drawable.vertical_white_divider_8dp)
+    }
+
+    //获取详情数据
+    private fun getDetail() {
+        showLoadingDialog()
+        val call = api?.getBrandDetail(brandId, els.getStringData(ELS.IMEI))
+        call?.enqueue(object : Callback<BrandDetailBean> {
+            override fun onFailure(call: Call<BrandDetailBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "品牌详情获取失败")
+                dismissLoadingDialog()
+            }
+
+            override fun onResponse(call: Call<BrandDetailBean>?, response: Response<BrandDetailBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val data = bean.data
+                    title = data.brandName
+                    content = data.description
+                    imgUrl = data.colorLogo
+                    img_logo?.loadImageFit(imgUrl)
+                    top_img_logo?.loadImageFit(imgUrl)
+                    brand_name?.text = title
+                    desc?.text = content
+
+                    val year = data.estTime
+                    if (year.contains("年")) {
+                        brand_year.text = "始于${data.estTime}"
+                    } else {
+                        brand_year.text = "始于${data.estTime}年"
+                    }
+                    share?.isEnabled = true
+                }
+                dismissLoadingDialog()
+            }
+        })
+    }
+
+    private fun getSelectList() {
+        //获取入选榜单
+        val call = api?.getBrandSelect(brandId, 0, 10, els.getStringData(ELS.IMEI))
+        call?.enqueue(object : Callback<RankingSelectBean> {
+            override fun onResponse(call: Call<RankingSelectBean>?, response: Response<RankingSelectBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val dataList = bean.data
+                    if (dataList.isNotEmpty()) {
+                        setSelectLayoutVisible(true)
+                        select_list?.adapter = BrandSelectRankingAdapter(mActivity, dataList, brandId)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<RankingSelectBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "入选榜单获取失败")
+            }
+        })
+    }
+
+    private fun getDg() {
+        val dgCall = api?.getBrandDg(els.getStringData(ELS.IMEI), els.getStringData(ELS.IMEI), brandId)
+        dgCall?.enqueue(object : Callback<BrandDetailDgBean> {
+            override fun onFailure(call: Call<BrandDetailDgBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "获取导购信息失败")
+                tv_on_list?.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<BrandDetailDgBean>?, response: Response<BrandDetailDgBean>?) {
+                val bean = response?.body()
+                if (bean?.code.equals("1")) {
+                    //设置导购信息
+                    if (bean?.dgList != null && bean.dgList.isNotEmpty()) {
+                        tv_on_list?.visibility = View.VISIBLE
+                        dg_list?.adapter = BrandDgListAdapter(mActivity, bean.dgList)
+                    } else {
+                        tv_on_list?.visibility = View.GONE
+                    }
+                } else {
+                    tv_on_list?.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+    private fun requestCollectAction() {
+        //收藏/取消收藏操作
+        val doType = if (mFavor) 1 else 0
+        val collectCall = api?.collectAction(0, brandId, els.getStringData(ELS.USER_ID)
+                , doType, els.getStringData(ELS.IMEI))
+        collectCall?.enqueue(object : Callback<CommonCodeBean> {
+            override fun onFailure(call: Call<CommonCodeBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "收藏/取消收藏失败")
+            }
+
+            override fun onResponse(call: Call<CommonCodeBean>?, response: Response<CommonCodeBean>?) {
+                val bean = response?.body()
+                //-1:服务器错误	2：用户不存在；3：榜单/品牌不存在
+                when (bean?.code) {
+                    "-1" -> showToast(resources.getString(R.string.server_error))
+                    "2" -> showToast(resources.getString(R.string.pls_register))
+                    "3" -> showToast("品牌不存在")
+                    "1" -> {
+                        if (mFavor) {
+                            DataSupport.deleteAll(CollectDatabase::class.java,
+                                    "project_id=?", "$brandId")
+                            showToast(resources.getString(R.string.cancel_collect))
+                        } else {
+                            showToast(resources.getString(R.string.collect_success))
+                            val database = CollectDatabase()
+                            database.project_id = brandId
+                            database.save()
+                        }
+                        mFavor = !mFavor
+                        updateFavorButton()
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun updateFavorButton() {
+        //更新收藏按钮
+        if (!mFavor) {
+            collect.text = resources.getString(R.string.not_collect)
+            collect.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color2))
+            collect.setBackgroundResource(R.drawable.ranking_btn_drawable)
+        } else {
+            collect.text = resources.getString(R.string.has_collect)
+            collect.setTextColor(ContextCompat.getColor(mActivity, R.color.white))
+            collect.setBackgroundResource(R.drawable.ranking_btn_drawable2)
+        }
+    }
+
+    private fun setSelectLayoutVisible(flag: Boolean = false) {
+        if (flag) {
+            tv_select?.visibility = View.VISIBLE
+            select_list?.visibility = View.VISIBLE
+        } else {
+            tv_select?.visibility = View.GONE
+            select_list?.visibility = View.GONE
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.share -> {
+                if (!TextUtils.isEmpty(brand_name?.text.toString())) {
+                    SocialShareActivity.intentTo(mActivity, title
+                            , content, imgUrl, 0, brandId, SocialShareActivity.TYPE_BRAND)
+                }
+            }
+            R.id.collect -> {
+                if (!els.getBoolData(ELS.USER_ONLAND) && !els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+                    intentToLogin(mActivity)
+                } else {
+                    requestCollectAction()
+                }
+            }
+            R.id.expose_layout -> intentToContactUs(mActivity)
+        }
+    }
+}

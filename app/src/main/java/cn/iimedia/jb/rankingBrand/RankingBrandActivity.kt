@@ -1,0 +1,278 @@
+package cn.iimedia.jb.rankingBrand
+
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.Config
+import cn.iimedia.jb.common.Config.RANK_INFO_ID
+import cn.iimedia.jb.common.intentToContactUs
+import cn.iimedia.jb.common.intentToLogin
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.CollectDatabase
+import cn.iimedia.jb.http.bean.CommonCodeBean
+import cn.iimedia.jb.http.bean.RankingBrandListBean
+import cn.iimedia.jb.http.bean.RankingDetailBean
+import cn.iimedia.jb.rankingBrand.adapter.BrandListAdapter
+import cn.iimedia.jb.rankingBrand.adapter.RankingPagerAdapter
+import cn.iimedia.jb.rankingBrand.fragment.FragmentGradeList
+import cn.iimedia.jb.rankingBrand.fragment.OnGradeClickListener
+import cn.iimedia.jb.rankingBrand.scrollPage.PageBehavior
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.social.SocialShareActivity
+import com.xiong.appbase.utils.*
+import kotlinx.android.synthetic.main.activity_ranking_brand.*
+import kotlinx.android.synthetic.main.brand_layout.*
+import kotlinx.android.synthetic.main.expose_layout.*
+import kotlinx.android.synthetic.main.push_down_layout.*
+import kotlinx.android.synthetic.main.push_up_layout.*
+import kotlinx.android.synthetic.main.ranking_brand_top_bar.*
+import kotlinx.android.synthetic.main.ranking_middle_layout.*
+import kotlinx.android.synthetic.main.ranking_top_layout.*
+import org.litepal.crud.DataSupport
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/4/18.
+ * 品牌榜单页
+ */
+class RankingBrandActivity : BaseActivity(), View.OnClickListener, OnGradeClickListener {
+    private var mFavor = false
+    private val mFragments = ArrayList<Fragment>()
+    private var id = 0
+    private var api: APIConstants? = null
+    private var els: ELS = ELS.getInstance()
+    private var isTop = true
+    private val mActivity = this
+    private var imgUrl = ""
+    private var content = ""
+    private var title = ""
+
+    override fun getLayoutId(): Int = R.layout.activity_ranking_brand
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        api = RequestEngine.createService(APIConstants::class.java)
+        share?.isEnabled = false
+        setPullPush()
+
+        id = intent.extras.getInt(Config.RANK_INFO_ID, 0)
+        setTopEnabled(true, false)
+        //根据数据库更新收藏按钮状态
+        val databaseList = DataSupport.where("project_id=?", "$id")
+                .find(CollectDatabase::class.java)
+        mFavor = databaseList.isNotEmpty()
+        updateFavorButton()
+
+        //设置上下翻页交互
+        page_container?.setOnPageChanged(object : PageBehavior.OnPageChanged {
+            override fun toTop() {
+                isTop = true
+                setTopEnabled(true, false)
+                setPullPush()
+            }
+
+            override fun toBottom() {
+                isTop = false
+                setTopEnabled(false, true)
+                setPullPush()
+            }
+        })
+        //配置ViewPager
+        val bundle = Bundle()
+        bundle.putInt(RANK_INFO_ID, id)
+        mFragments.add(FragmentGradeList.getInstance(bundle))
+
+        vp.adapter = RankingPagerAdapter(supportFragmentManager, mFragments)
+        tabs.setupWithViewPager(vp)
+
+        getDetailData()
+        getBrandData()
+        toolbar?.setNavigationOnClickListener { finish() }
+        share?.setOnClickListener(this)
+        favor?.setOnClickListener(this)
+        fl_top_brand?.setOnClickListener(this)
+        fl_top_ranking?.setOnClickListener(this)
+        expose_layout?.setOnClickListener(this)
+    }
+
+    private fun getDetailData() {
+        val call = api?.getRankingDetail(id, els.getStringData(ELS.IMEI))
+        call?.enqueue(object : Callback<RankingDetailBean> {
+            override fun onFailure(call: Call<RankingDetailBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "榜单详情获取失败")
+            }
+
+            override fun onResponse(call: Call<RankingDetailBean>?, response: Response<RankingDetailBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val data = bean.data
+                    title = data.name
+                    content = data.description
+                    imgUrl = data.imgUrl
+                    ranking_name?.text = title
+                    tv_ranking_time?.text = TimeTypeUtils.timestamp2yyyyMMdd(data.updateTime.toLong())
+                    share.isEnabled = true
+                }
+            }
+        })
+    }
+
+    //获取品牌列表
+    private fun getBrandData() {
+        val manager = LinearLayoutManagerWrapper(mActivity)
+        manager.isAutoMeasureEnabled
+        brand_list?.layoutManager = manager
+        brand_list?.addDivider(mActivity, R.drawable.vertical_gray_divider_8dp)
+        brand_list?.isNestedScrollingEnabled = false
+        brand_list?.setHasFixedSize(true)
+        val call = api?.getRankingBrandDetail(id, els.getStringData(ELS.IMEI))
+        call?.enqueue(object : Callback<RankingBrandListBean> {
+            override fun onResponse(call: Call<RankingBrandListBean>?, response: Response<RankingBrandListBean>?) {
+                val bean = response?.body()
+                if (bean?.code == 1) {
+                    val brandList = bean.data.brands
+                    brand_list?.adapter = BrandListAdapter(mActivity, brandList)
+                }
+            }
+
+            override fun onFailure(call: Call<RankingBrandListBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "榜单品牌详情获取失败")
+                showToast("数据获取失败")
+            }
+        })
+
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.share -> {
+                if (!TextUtils.isEmpty(ranking_name?.text.toString())) {
+                    SocialShareActivity.intentTo(mActivity, title
+                            , content, imgUrl, id, 0, SocialShareActivity.TYPE_RANKING)
+                }
+            }
+            R.id.favor -> {
+                if (!els.getBoolData(ELS.USER_ONLAND) && !els.getBoolData(ELS.USER_ONLAND_THIRD)) {
+                    intentToLogin(mActivity)
+                } else {
+                    requestCollectAction()
+                }
+            }
+            R.id.fl_top_brand -> {
+                if (isTop) {
+                    isTop = false
+                    setTopEnabled(false, true)
+                    page_container?.scrollToBottom()
+                    setPullPush()
+                }
+            }
+            R.id.fl_top_ranking -> {
+                if (!isTop) {
+                    isTop = true
+                    setTopEnabled(true, false)
+                    page_container?.backToTop()
+                    setPullPush()
+                }
+            }
+            R.id.expose_layout -> intentToContactUs(mActivity)
+        }
+    }
+
+    override fun gradeClickListener(position: Int) {
+        //点击对应评分滚到对应品牌
+        page_container?.scrollToBottom()
+        isTop = false
+        setPullPush()
+        //数据加载失败可能没有品牌列表
+        if (brand_list?.childCount == 0) return
+        val top: Int = brand_list?.getChildAt(position)?.top!! + ScreenUtils.dp2px(44f)
+        pageTwo?.scrollBy(0, top)
+    }
+
+    private fun setTopEnabled(rankingFlag: Boolean, brandFlag: Boolean) {
+        //更改tab
+        if (rankingFlag) {
+            iv_top_ranking?.visibility = View.VISIBLE
+            tv_top_ranking?.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color2))
+        } else {
+            iv_top_ranking?.visibility = View.GONE
+            tv_top_ranking?.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color1))
+        }
+        if (brandFlag) {
+            iv_top_brand?.visibility = View.VISIBLE
+            tv_top_brand?.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color2))
+        } else {
+            iv_top_brand?.visibility = View.GONE
+            tv_top_brand?.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color1))
+        }
+    }
+
+    private fun setPullPush() {
+        //设置拖拉文字显示
+        if (isTop) {
+            rl_push_up?.visibility = View.VISIBLE
+            rl_push_down?.visibility = View.INVISIBLE
+        } else {
+            rl_push_up?.visibility = View.INVISIBLE
+            rl_push_down?.visibility = View.VISIBLE
+        }
+    }
+
+    private fun requestCollectAction() {
+        //收藏/取消收藏操作
+        val doType = if (mFavor) 1 else 0
+        val collectCall = api?.collectAction(1, id, els.getStringData(ELS.USER_ID)
+                , doType, els.getStringData(ELS.IMEI))
+        collectCall?.enqueue(object : Callback<CommonCodeBean> {
+            override fun onFailure(call: Call<CommonCodeBean>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "收藏/取消收藏失败")
+            }
+
+            override fun onResponse(call: Call<CommonCodeBean>?, response: Response<CommonCodeBean>?) {
+                val bean = response?.body()
+                //-1:服务器错误	2：用户不存在；3：榜单/品牌不存在
+                when (bean?.code) {
+                    "-1" -> showToast(resources.getString(R.string.server_error))
+                    "2" -> showToast(resources.getString(R.string.pls_register))
+                    "3" -> showToast("榜单不存在")
+                    "1" -> {
+                        if (mFavor) {
+                            DataSupport.deleteAll(CollectDatabase::class.java,
+                                    "project_id=?", "$id")
+                            showToast(resources.getString(R.string.cancel_collect))
+                        } else {
+                            showToast(resources.getString(R.string.collect_success))
+                            val database = CollectDatabase()
+                            database.project_id = id
+                            database.save()
+                        }
+                        mFavor = !mFavor
+                        updateFavorButton()
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun updateFavorButton() {
+        if (!mFavor) {
+            favor?.text = resources.getString(R.string.not_collect)
+            favor?.setTextColor(ContextCompat.getColor(mActivity, R.color.text_color2))
+            favor?.setBackgroundResource(R.drawable.ranking_btn_drawable)
+        } else {
+            favor?.text = resources.getString(R.string.has_collect)
+            favor?.setTextColor(ContextCompat.getColor(mActivity, R.color.white))
+            favor?.setBackgroundResource(R.drawable.ranking_btn_drawable2)
+        }
+    }
+
+}

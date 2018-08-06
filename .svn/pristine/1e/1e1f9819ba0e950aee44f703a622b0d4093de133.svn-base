@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="multi_select_list_preference_default_value"/>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+    <color name="black">#000000</color>
+    <color name="blue">#2c90c4</color>
+    <color name="blue2">#36B4F2</color>
+    <color name="colorAccent">#f17a52</color>
+    <color name="colorPrimary">#1E3B4B</color>
+    <color name="colorPrimaryDark">#112C3D</color>
+    <color name="dan_gray">#666666</color>
+    <color name="dimgray">#696969</color>
+    <color name="edit_background">#20295B</color>
+    <color name="gray">#8e8e8e</color>
+    <color name="header_bg">#fe6f07</color>
+    <color name="heat_line_wrap_color">#BDBDBD</color>
+    <color name="line">#eeeeee</color>
+    <color name="markerview_back">#6F6F6F</color>
+    <color name="orange">#FF6600</color>
+    <color name="primary_text_color">#101010</color>
+    <color name="red">#ff0000</color>
+    <color name="secondary_text_color">#BBBBBB</color>
+    <color name="separate_view_color">#BDBDBD</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="base_action_bar_height">48.0dip</dimen>
+    <dimen name="base_action_bar_title_size">22.0sp</dimen>
+    <dimen name="common_margin">8dp</dimen>
+    <dimen name="common_padding">8dp</dimen>
+    <dimen name="divider_height">0.01dp</dimen>
+    <dimen name="font_large">16sp</dimen>
+    <dimen name="font_medium">14sp</dimen>
+    <dimen name="font_small">12sp</dimen>
+    <dimen name="font_xlarge">18sp</dimen>
+    <dimen name="item_height">36dp</dimen>
+    <string name="app_name">BaseAPP</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="ok">好的</string>
+    <string name="pref_default_display_name">John Smith</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_general">General</string>
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_settings">Settings</string>
+    <style name="AppBaseTheme" parent="QMUI.Compat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+    <style name="AppBaseTheme.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style>
+    <style name="MainActivityTheme" parent="AppBaseTheme">
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style>
+    <style name="Material.Drawable.IndicatorStyle">
+        <item name="cpd_padding">0dp</item>
+        <item name="cpd_initialAngle">0</item>
+        <item name="cpd_maxSweepAngle">270</item>
+        <item name="cpd_minSweepAngle">1</item>
+        <item name="cpd_strokeSize">4dp</item>
+        <item name="cpd_strokeColor">@color/colorAccent</item>
+        <item name="cpd_strokeSecondaryColor">@android:color/transparent</item>
+        <item name="cpd_reverse">false</item>
+        <item name="cpd_rotateDuration">1000</item>
+        <item name="cpd_transformDuration">600</item>
+        <item name="cpd_keepDuration">200</item>
+        <item name="cpd_transformInterpolator">@android:anim/decelerate_interpolator</item>
+        <item name="cpd_inAnimDuration">0</item>
+        <item name="cpd_outAnimDuration">@android:integer/config_mediumAnimTime</item>
+    </style>
+    <style name="SplashTheme" parent="AppBaseTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style>
+    <style name="activity_animation_style">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/open_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+    <style name="indicator_dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowFrame">@null</item>
+        
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>

@@ -1,0 +1,27 @@
+package cn.iimedia.jb.common
+
+/**
+ * Created by iiMedia on 2018/4/26.
+ * 一些测试参数
+ */
+val HTTP_LOG_TAG = "http_request"
+val DATABASE_TAG = "database_tag"
+
+val RANK_INFO_ID = "rankInfoId"
+
+val BRAND_ID = "brandId"
+
+val TOPIC_ID = "topicId"
+
+val INFO_ID = "infoId"
+
+val TWO_LEVEL_ID = "two_level_id"
+
+val TWO_LEVEL_NAME = "two_level_name"
+
+val COUNT_DOWN = "count_down"
+
+val RESET_PSW_PHONE = "reset_psw_phone"
+
+val RESET_PSW_CODE = "reset_psw_code"
+

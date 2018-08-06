@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    style="@style/AppBaseTheme.Toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/white"
+    app:navigationIcon="@mipmap/btn_back"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:titleTextAppearance="@style/toolbar_title_text">
+
+    <LinearLayout
+        android:id="@+id/top_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/fl_top_ranking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="4dp">
+
+            <ImageView
+                android:id="@+id/iv_top_ranking"
+                style="@style/ranking_brand_top_crown" />
+
+            <TextView
+                android:id="@+id/tv_top_ranking"
+                style="@style/ranking_brand_top_text"
+                android:text="榜单" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_top_brand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="4dp">
+
+            <ImageView
+                android:id="@+id/iv_top_brand"
+                style="@style/ranking_brand_top_crown" />
+
+            <TextView
+                android:id="@+id/tv_top_brand"
+                style="@style/ranking_brand_top_text"
+                android:text="品牌" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/share"
+        style="@style/top_btn"
+        android:layout_gravity="end"
+        android:background="?attr/selectableItemBackground"
+        android:src="@mipmap/btn_share" />
+</android.support.v7.widget.Toolbar>

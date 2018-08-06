@@ -1,0 +1,2 @@
+//include ':app', ':appbase', ':takephoto_library', ':ucrop', ':mediasel'
+include ':app', ':appbase', ':ucrop', ':mediasel'

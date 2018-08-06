@@ -1,0 +1,34 @@
+package cn.iimedia.jb.mine.fragment
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.mine.adapter.CollectRankingAdapter
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.extension.addDivider
+import kotlinx.android.synthetic.main.fragment_ranking.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 收藏榜单
+ */
+class FragmentRanking : BaseFragment() {
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_ranking
+    }
+
+    companion object {
+        fun getInstance(): FragmentRanking {
+            val f = FragmentRanking()
+            return f
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ranking_list.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        ranking_list.addDivider(mActivity, R.drawable.vertical_gray_divider_8dp)
+        ranking_list.adapter = CollectRankingAdapter(mActivity)
+    }
+}

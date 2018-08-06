@@ -1,0 +1,57 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.utils.DialogUtils
+import kotlinx.android.synthetic.main.activity_setting.*
+
+/**
+ * Created by iiMedia on 2018/5/3.
+ * 设置页面
+ */
+class SettingActivity : BaseActivity(), View.OnClickListener {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_setting
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        back.setOnClickListener(this)
+        change_password_layout.setOnClickListener(this)
+        about_us_layout.setOnClickListener(this)
+        protocol_layout.setOnClickListener(this)
+        logout.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.back -> finish()
+            R.id.change_password_layout -> {
+            }
+            R.id.about_us_layout -> {
+            }
+            R.id.protocol_layout -> {
+            }
+            R.id.logout -> {
+                val logoutDialog = DialogUtils.showPositiveNegativeContent(mActivity, "确定要退出登录吗?")
+                { dialog: MaterialDialog, which: DialogAction ->
+                    when (which) {
+                        DialogAction.POSITIVE -> {
+                            dialog.dismiss()
+                        }
+                        DialogAction.NEGATIVE -> {
+                            dialog.dismiss()
+                        }
+                        else->{}
+                    }
+                }
+                logoutDialog.show()
+            }
+        }
+    }
+}

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/AppBaseTheme.Toolbar"
+        android:background="@color/white"
+        app:navigationIcon="@mipmap/btn_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextAppearance="@style/toolbar_title_text">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="联系我们"
+            android:textColor="@color/text_color1"
+            android:textSize="15sp" />
+    </android.support.v7.widget.Toolbar>
+
+    <include layout="@layout/cut_off_line" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/login_hint"
+                    android:layout_marginTop="16dp"
+                    android:text="您的建议  *" />
+
+                <TextView
+                    android:id="@+id/message_error"
+                    style="@style/login_error"
+                    android:layout_marginTop="16dp"
+                    tools:text="字数限制1-1000字" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/et_message"
+                style="@style/login_eidttext"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="start"
+                android:inputType="textMultiLine"
+                android:maxLength="1000"
+                android:scrollbars="vertical" />
+
+            <TextView
+                android:id="@+id/msg_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:text="0/1000" />
+
+            <TextView
+                style="@style/login_hint"
+                android:layout_marginTop="16dp"
+                android:text="您的姓名" />
+
+            <EditText
+                android:id="@+id/et_name"
+                style="@style/login_eidttext"
+                android:hint="请不要超过10个字符"
+                android:inputType="text"
+                android:maxLength="10" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/login_hint"
+                    android:text="您的电话" />
+
+                <TextView
+                    android:id="@+id/phone_error"
+                    style="@style/login_error"
+                    tools:text="号码格式错误" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/et_phone"
+                style="@style/login_eidttext"
+                android:inputType="phone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/login_hint"
+                    android:text="您的邮箱" />
+
+                <TextView
+                    android:id="@+id/email_error"
+                    style="@style/login_error"
+                    tools:text="邮箱格式错误" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/et_email"
+                style="@style/login_eidttext"
+                android:inputType="textEmailAddress" />
+
+            <Button
+                android:id="@+id/btn_commit"
+                style="@style/login_button"
+                android:layout_marginBottom="32dp"
+                android:text="提 交 留 言" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

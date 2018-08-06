@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">艾媒金榜</string>
+    <string name="pageBehavior" translatable="false">cn.iimedia.jb.rankingBrand.scrollPage.PageBehavior</string>
+    <string name="logout_text">登录 / 注册</string>
+</resources>

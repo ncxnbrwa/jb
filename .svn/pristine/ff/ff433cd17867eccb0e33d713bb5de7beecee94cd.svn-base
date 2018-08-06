@@ -1,0 +1,78 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    def ext = rootProject.extensions.getByName("ext")
+    compileSdkVersion ext.target_version
+    buildToolsVersion ext.build_version
+
+    defaultConfig {
+        minSdkVersion ext.min_version
+        targetSdkVersion ext.target_version
+        versionCode ext.code_version
+        versionName ext.code_version_name
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        multiDexEnabled true
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField "boolean", "mbDebugMode", "true"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "mbDebugMode", "false"
+        }
+    }
+    //用于统一维度,避免AS3.0的编译错误
+    flavorDimensions "tier"
+    productFlavors {
+        iimedia {
+            dimension 'tier'
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile androidDependencies.appcompat_v7
+    compile androidDependencies.recyclerView
+    compile androidDependencies.cardview_v7
+    compile androidDependencies.design
+    compile viewDependencies.retrofit2
+    compile viewDependencies.retrofit2_gson
+    compile viewDependencies.okhttp3_logging
+    compile viewDependencies.butterknife
+    annotationProcessor viewDependencies.butterknife_compiler
+//    compile viewDependencies.util_code
+    compile viewDependencies.qmui
+    compile viewDependencies.material_dialogs
+    compile viewDependencies.rey5137_material
+    compile viewDependencies.fragmentation
+    compile viewDependencies.fragmentation_swipe
+    compile viewDependencies.gif
+    compile viewDependencies.glide
+    annotationProcessor viewDependencies.glideAnnotationProcessor
+    compile viewDependencies.glideTransformations
+    compile viewDependencies.smart_refresh
+    compile 'com.github.frendyxzc:TabLayout:0.0.5'
+//    compile 'com.github.hackware1993:MagicIndicator:1.5.0'
+    compile "org.jetbrains.anko:anko-common:$anko_version"
+    compile 'com.zhihu.android:matisse:0.4.3'
+//    implementation "com.android.support:multidex:1.0.3"
+}
+repositories {
+    mavenCentral()
+}

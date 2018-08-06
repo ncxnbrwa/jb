@@ -1,0 +1,65 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppBaseTheme" parent="QMUI.Compat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="JbAppTheme" parent="AppBaseTheme">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style>
+
+    <!--品牌榜单页顶部文字样式-->
+    <style name="ranking_brand_top_text">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!--品牌榜单页顶部皇冠图标样式-->
+    <style name="ranking_brand_top_crown">
+        <item name="android:layout_width">12dp</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:src">@mipmap/nav_crown</item>
+    </style>
+
+    <!--品牌榜单页顶部未关注按钮样式-->
+    <style name="common_btn1">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:textColor">@color/text_color2</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/ranking_btn_drawable</item>
+    </style>
+
+    <!--品牌榜单页顶部已关注按钮样式-->
+    <style name="ranking_btn_favor">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/ranking_btn_drawable2</item>
+    </style>
+
+    <!--榜单页Tab文字样式-->
+    <style name="ranking_tab_text">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/text_color3</item>
+    </style>
+
+    <!--头部选择按钮样式-->
+    <style name="top_btn">
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+</resources>

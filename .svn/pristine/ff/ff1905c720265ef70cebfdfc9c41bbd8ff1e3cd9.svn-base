@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="type_2_item_color_0">#66bb6a</color>
+    <color name="type_2_item_color_1">#26a69a</color>
+    <color name="type_2_item_color_2">#42a5f5</color>
+    <color name="type_2_item_color_3">#ffc107</color>
+    <color name="type_2_item_color_4">#ef5350</color>
+    <color name="type_2_item_color_5">#03a9f4</color>
+    <color name="type_2_item_color_6">#3f51b5</color>
+    <color name="type_2_item_color_7">#00bcd4</color>
+</resources>

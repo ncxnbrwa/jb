@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <Space
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:background="@color/transparent" />
+
+    <ImageView
+        android:id="@+id/img_code"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/zhanweitu" />
+
+    <TextView
+        android:id="@+id/refresh_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:drawableLeft="@mipmap/icon_refresh"
+        android:drawablePadding="8dp"
+        android:text="刷新验证码"
+        android:textColor="@color/text_color8"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <EditText
+            android:id="@+id/et_img_code"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/img_code_edit_bg"
+            android:hint="输入图片验证码"
+            android:maxLength="5"
+            android:padding="8dp"
+            android:textColorHint="@color/text_color3"
+            android:textSize="14sp" />
+
+        <Space
+            android:layout_width="200dp"
+            android:layout_height="56dp"
+            android:layout_below="@+id/et_img_code"
+            android:background="@color/transparent" />
+
+        <TextView
+            android:id="@+id/error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_img_code"
+            android:layout_marginTop="4dp"
+            android:drawableLeft="@mipmap/icon_red_wrong"
+            android:drawablePadding="4dp"
+            android:textColor="@color/text_color7"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="验证码有误" />
+
+        <TextView
+            android:id="@+id/correct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_img_code"
+            android:layout_marginTop="4dp"
+            android:drawableLeft="@mipmap/icon_green_correct"
+            android:drawablePadding="4dp"
+            android:text="图形验证码正确"
+            android:textColor="@color/text_color9"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_img_code"
+            android:layout_marginTop="4dp"
+            android:drawablePadding="4dp"
+            android:text="校验中..."
+            android:textColor="@color/text_color1"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</LinearLayout>

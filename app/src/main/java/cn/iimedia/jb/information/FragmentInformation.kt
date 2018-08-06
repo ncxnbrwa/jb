@@ -1,0 +1,134 @@
+package cn.iimedia.jb.information
+
+import android.os.Bundle
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.Config
+import cn.iimedia.jb.http.APIConstants
+import cn.iimedia.jb.http.bean.InfoListData
+import cn.iimedia.jb.information.adapter.InfoListAdapter
+import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import com.xiong.appbase.base.BaseFragment
+import com.xiong.appbase.custom.LinearLayoutManagerWrapper
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.DLog
+import kotlinx.android.synthetic.main.fragment_info.*
+import kotlinx.android.synthetic.main.load_failure.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+/**
+ * Created by iiMedia on 2018/6/8.
+ * 资讯页面
+ */
+class FragmentInformation : BaseFragment(), OnRefreshListener, OnLoadMoreListener, View.OnClickListener {
+    val api: APIConstants = RequestEngine.createService2(APIConstants::class.java)
+    var pageNum = 1
+    var infoAdapter: InfoListAdapter? = null
+    val infoList: ArrayList<InfoListData> = ArrayList()
+
+    override fun getLayoutId(): Int = R.layout.fragment_info
+
+    companion object {
+        fun getInstance(): FragmentInformation {
+            val f = FragmentInformation()
+            return f
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        refresh_layout?.setOnRefreshListener(this)
+        refresh_layout?.setOnLoadMoreListener(this)
+        btn_refresh?.setOnClickListener(this)
+        info_list?.layoutManager = LinearLayoutManagerWrapper(mActivity)
+        refresh_layout?.autoRefresh()
+    }
+
+    override fun onRefresh(refreshLayout: RefreshLayout?) {
+        pageNum = 1
+        infoList.clear()
+        refresh_layout?.setNoMoreData(false)
+        getInfoList()
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout?) {
+        getInfoList()
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_refresh -> {
+                load_failure_layout?.visibility = View.GONE
+                refresh_layout?.visibility = View.VISIBLE
+                refresh_layout?.autoRefresh()
+            }
+        }
+    }
+
+    private fun getInfoList() {
+        val infoListCall = api.getInfoList(880, pageNum, 10, "bjx.iimedia.cn")
+        infoListCall.enqueue(object : Callback<ArrayList<InfoListData>> {
+            override fun onFailure(call: Call<ArrayList<InfoListData>>?, t: Throwable?) {
+                DLog.w(Config.HTTP_LOG_TAG, "获取资讯列表失败")
+                finishState()
+                load_failure_layout?.visibility = View.VISIBLE
+                refresh_layout?.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<ArrayList<InfoListData>>?
+                                    , response: Response<ArrayList<InfoListData>>?) {
+                val bean = response?.body()
+                if (bean != null && bean.isNotEmpty()) {
+                    load_failure_layout?.visibility = View.GONE
+                    refresh_layout?.visibility = View.VISIBLE
+                    infoList.addAll(bean)
+                    removeDuplication(infoList)
+                    initAdapter()
+                    if (bean.size < 10) {
+                        refresh_layout?.finishLoadMoreWithNoMoreData()
+                    } else {
+                        pageNum++
+                    }
+                } else {
+                    load_failure_layout?.visibility = View.VISIBLE
+                    refresh_layout?.visibility = View.GONE
+                }
+                finishState()
+            }
+        })
+    }
+
+    private fun initAdapter() {
+        if (infoAdapter == null) {
+            infoAdapter = InfoListAdapter(mActivity, infoList)
+            info_list?.adapter = infoAdapter
+        } else {
+            infoAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    private fun removeDuplication(dataList: ArrayList<InfoListData>) {
+        //去重
+        for (i in 0 until dataList.size - 1) {
+            (dataList.size - 1 downTo i + 1)
+                    .filter { dataList[it].no == dataList[i].no }
+                    .forEach { dataList.remove(dataList[i]) }
+        }
+    }
+
+    private fun finishState() {
+        if (refresh_layout != null) {
+            if (refresh_layout.isRefreshing) {
+                refresh_layout.finishRefresh()
+            }
+            if (refresh_layout.isLoading) {
+                refresh_layout.finishLoadMore()
+            }
+        }
+    }
+
+}

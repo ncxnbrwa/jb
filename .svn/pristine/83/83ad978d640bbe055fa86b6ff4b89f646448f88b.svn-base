@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main$Generated" generated="true"><source path="E:\xw\others\jb\appbase\src\main\res"><file path="E:\xw\others\jb\appbase\src\main\res\drawable\ic_launcher_background.xml" preprocessing="true" qualifiers=""><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-xxxhdpi\ic_launcher_background.png" qualifiers="xxxhdpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-mdpi\ic_launcher_background.png" qualifiers="mdpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-ldpi\ic_launcher_background.png" qualifiers="ldpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-xxhdpi\ic_launcher_background.png" qualifiers="xxhdpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-hdpi\ic_launcher_background.png" qualifiers="hdpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-xhdpi\ic_launcher_background.png" qualifiers="xhdpi-v4" type="drawable"/><generated-file path="E:\xw\others\jb\appbase\build\generated\res\pngs\iimedia\debug\drawable-anydpi-v21\ic_launcher_background.xml" qualifiers="anydpi-v21" type="drawable"/></file></source><source path="E:\xw\others\jb\appbase\build\generated\res\rs\iimedia\debug"/><source path="E:\xw\others\jb\appbase\build\generated\res\resValues\iimedia\debug"/></dataSet><dataSet config="main" generated-set="main$Generated"><source path="E:\xw\others\jb\appbase\src\main\res"><file name="fade_back" path="E:\xw\others\jb\appbase\src\main\res\anim\fade_back.xml" qualifiers="" type="anim"/><file name="fade_forward" path="E:\xw\others\jb\appbase\src\main\res\anim\fade_forward.xml" qualifiers="" type="anim"/><file name="open_enter" path="E:\xw\others\jb\appbase\src\main\res\anim\open_enter.xml" qualifiers="" type="anim"/><file name="open_exit" path="E:\xw\others\jb\appbase\src\main\res\anim\open_exit.xml" qualifiers="" type="anim"/><file name="slide_in_left" path="E:\xw\others\jb\appbase\src\main\res\anim\slide_in_left.xml" qualifiers="" type="anim"/><file name="slide_in_right" path="E:\xw\others\jb\appbase\src\main\res\anim\slide_in_right.xml" qualifiers="" type="anim"/><file name="slide_out_left" path="E:\xw\others\jb\appbase\src\main\res\anim\slide_out_left.xml" qualifiers="" type="anim"/><file name="slide_out_right" path="E:\xw\others\jb\appbase\src\main\res\anim\slide_out_right.xml" qualifiers="" type="anim"/><file name="ic_launcher_foreground" path="E:\xw\others\jb\appbase\src\main\res\drawable-v24\ic_launcher_foreground.xml" qualifiers="v24" type="drawable"/><file name="activity_main" path="E:\xw\others\jb\appbase\src\main\res\layout\activity_main.xml" qualifiers="" type="layout"/><file name="progress_default" path="E:\xw\others\jb\appbase\src\main\res\layout\progress_default.xml" qualifiers="" type="layout"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-anydpi-v26\ic_launcher.xml" qualifiers="anydpi-v26" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml" qualifiers="anydpi-v26" type="mipmap"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="hdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-hdpi\ic_launcher_round.png" qualifiers="hdpi-v4" type="mipmap"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-mdpi\ic_launcher.png" qualifiers="mdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-mdpi\ic_launcher_round.png" qualifiers="mdpi-v4" type="mipmap"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xhdpi\ic_launcher.png" qualifiers="xhdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xhdpi\ic_launcher_round.png" qualifiers="xhdpi-v4" type="mipmap"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xxhdpi\ic_launcher.png" qualifiers="xxhdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xxhdpi\ic_launcher_round.png" qualifiers="xxhdpi-v4" type="mipmap"/><file name="ic_launcher" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xxxhdpi\ic_launcher.png" qualifiers="xxxhdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="E:\xw\others\jb\appbase\src\main\res\mipmap-xxxhdpi\ic_launcher_round.png" qualifiers="xxxhdpi-v4" type="mipmap"/><file path="E:\xw\others\jb\appbase\src\main\res\values\colors.xml" qualifiers=""><color name="colorPrimary">#1E3B4B</color><color name="colorPrimaryDark">#112C3D</color><color name="colorAccent">#f17a52</color><color name="primary_text_color">#101010</color><color name="secondary_text_color">#BBBBBB</color><color name="line">#eeeeee</color><color name="transparent">#00000000</color><color name="white">#ffffff</color><color name="black">#000000</color><color name="gray">#8e8e8e</color><color name="dan_gray">#666666</color><color name="blue">#2c90c4</color><color name="blue2">#36B4F2</color><color name="orange">#FF6600</color><color name="red">#ff0000</color><color name="header_bg">#fe6f07</color><color name="dimgray">#696969</color><color name="markerview_back">#6F6F6F</color><color name="heat_line_wrap_color">#BDBDBD</color><color name="separate_view_color">#BDBDBD</color><color name="edit_background">#20295B</color></file><file path="E:\xw\others\jb\appbase\src\main\res\values\dimens.xml" qualifiers=""><dimen name="activity_horizontal_margin">16dp</dimen><dimen name="activity_vertical_margin">16dp</dimen><dimen name="base_action_bar_height">48.0dip</dimen><dimen name="base_action_bar_title_size">22.0sp</dimen><dimen name="divider_height">0.01dp</dimen><dimen name="item_height">36dp</dimen><dimen name="common_padding">8dp</dimen><dimen name="common_margin">8dp</dimen><dimen name="font_xlarge">18sp</dimen><dimen name="font_large">16sp</dimen><dimen name="font_medium">14sp</dimen><dimen name="font_small">12sp</dimen></file><file path="E:\xw\others\jb\appbase\src\main\res\values\strings.xml" qualifiers=""><string name="app_name">BaseAPP</string><string name="cancel">取消</string><string name="confirm">确定</string><string name="ok">好的</string><string name="title_activity_settings">Settings</string><string name="pref_header_general">General</string><string name="pref_title_social_recommendations">Enable social recommendations</string><string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string><string name="pref_title_display_name">Display name</string><string name="pref_default_display_name">John Smith</string><string name="pref_title_add_friends_to_messages">Add friends to messages</string><string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array><string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array><string name="pref_header_data_sync">Data &amp; sync</string><string name="pref_title_sync_frequency">Sync frequency</string><string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array><string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array><string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array><string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array><string-array name="multi_select_list_preference_default_value"/><string name="pref_title_system_sync_settings">System sync settings</string><string name="pref_header_notifications">Notifications</string><string name="pref_title_new_message_notifications">New message notifications</string><string name="pref_title_ringtone">Ringtone</string><string name="pref_ringtone_silent">Silent</string><string name="pref_title_vibrate">Vibrate</string></file><file path="E:\xw\others\jb\appbase\src\main\res\values\styles.xml" qualifiers=""><style name="AppBaseTheme" parent="QMUI.Compat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style><style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style><style name="MainActivityTheme" parent="AppBaseTheme">
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style><style name="activity_animation_style">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/open_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style><style name="SplashTheme" parent="AppBaseTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        
+        <item name="android:windowAnimationStyle">@style/activity_animation_style</item>
+    </style><style name="AppBaseTheme.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:layout_width">match_parent</item>
+    </style><style name="indicator_dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowFrame">@null</item>
+        
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style><style name="Material.Drawable.IndicatorStyle">
+        <item name="cpd_padding">0dp</item>
+        <item name="cpd_initialAngle">0</item>
+        <item name="cpd_maxSweepAngle">270</item>
+        <item name="cpd_minSweepAngle">1</item>
+        <item name="cpd_strokeSize">4dp</item>
+        <item name="cpd_strokeColor">@color/colorAccent</item>
+        <item name="cpd_strokeSecondaryColor">@android:color/transparent</item>
+        <item name="cpd_reverse">false</item>
+        <item name="cpd_rotateDuration">1000</item>
+        <item name="cpd_transformDuration">600</item>
+        <item name="cpd_keepDuration">200</item>
+        <item name="cpd_transformInterpolator">@android:anim/decelerate_interpolator</item>
+        <item name="cpd_inAnimDuration">0</item>
+        <item name="cpd_outAnimDuration">@android:integer/config_mediumAnimTime</item>
+    </style></file></source><source path="E:\xw\others\jb\appbase\build\generated\res\rs\iimedia\debug"/><source path="E:\xw\others\jb\appbase\build\generated\res\resValues\iimedia\debug"/></dataSet><dataSet config="iimedia$Generated" generated="true"><source path="E:\xw\others\jb\appbase\src\iimedia\res"/></dataSet><dataSet config="iimedia" generated-set="iimedia$Generated"><source path="E:\xw\others\jb\appbase\src\iimedia\res"/></dataSet><dataSet config="debug$Generated" generated="true"><source path="E:\xw\others\jb\appbase\src\debug\res"/></dataSet><dataSet config="debug" generated-set="debug$Generated"><source path="E:\xw\others\jb\appbase\src\debug\res"/></dataSet><dataSet config="iimediaDebug$Generated" generated="true"><source path="E:\xw\others\jb\appbase\src\iimediaDebug\res"/></dataSet><dataSet config="iimediaDebug" generated-set="iimediaDebug$Generated"><source path="E:\xw\others\jb\appbase\src\iimediaDebug\res"/></dataSet><mergedItems/></merger>

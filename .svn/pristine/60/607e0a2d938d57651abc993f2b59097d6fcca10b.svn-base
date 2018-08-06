@@ -1,0 +1,71 @@
+package cn.iimedia.jb.mine.activity
+
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import cn.iimedia.jb.R
+import cn.iimedia.jb.common.RESET_PSW_CODE
+import cn.iimedia.jb.common.RESET_PSW_PHONE
+import cn.iimedia.jb.http.APIConstants
+import com.xiong.appbase.base.BaseActivity
+import com.xiong.appbase.http.RequestEngine
+import com.xiong.appbase.utils.ELS
+import kotlinx.android.synthetic.main.activity_reset_password.*
+
+/**
+ * Created by iiMedia on 2018/5/10.
+ * 找回密码下一步
+ */
+class ResetPasswordActivity : BaseActivity(), View.OnClickListener {
+    val api:APIConstants = RequestEngine.createService(APIConstants::class.java)
+    val els:ELS = ELS.getInstance()
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_reset_password
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        toolbar.setNavigationOnClickListener { finish() }
+        btn_last.setOnClickListener(this)
+        btn_ok.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_last -> finish()
+            R.id.btn_ok -> commit()
+        }
+    }
+
+    private fun commit() {
+        val newPsw = et_new_psw.text.toString()
+        val confirmPsw = et_confirm_psw.text.toString()
+        val phone = mApp.receiveInternalActivityParam(RESET_PSW_PHONE)
+        val code=  mApp.receiveInternalActivityParam(RESET_PSW_CODE)
+
+        if (TextUtils.isEmpty(newPsw)) {
+            showToast("新密码不能为空")
+            return
+        }
+        if (newPsw.length < 6 || newPsw.length > 12) {
+            showToast("密码必须为6-12位数字或字母")
+            return
+        }
+        if (TextUtils.isEmpty(confirmPsw)) {
+            showToast("确认新密码不能为空")
+            return
+        }
+        if (!newPsw.equals(confirmPsw)) {
+            showToast("两次输入新密码不一致")
+            return
+        }
+        if (TextUtils.isEmpty(phone.toString()) || TextUtils.isEmpty(code.toString())) {
+            return
+        }
+
+        showToast("重置成功")
+        finish()
+        mApp.finishSpecialActivity(ForgetPasswordActivity::class.java)
+    }
+}
